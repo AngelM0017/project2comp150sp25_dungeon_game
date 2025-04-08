@@ -10,10 +10,10 @@
             <h1>Welcome to the Tomb of the Dead!</h1>
             <h2>Choose your character:</h2>
             <div class="character-options">
-                <button data-character="1">Swordsman</button>
-                <button data-character="2">Mage</button>
-                <button data-character="3">FrostRevenant</button>
-                <button data-character="4">CelestialMonk</button>
+                <button onclick="selectCharacter(1)" data-character="1">Swordsman</button>
+                <button onclick="selectCharacter(2)" data-character="2">Mage</button>
+                <button onclick="selectCharacter(3)" data-character="3">FrostRevenant</button>
+                <button onclick="selectCharacter(4)" data-character="4">CelestialMonk</button>
             </div>
             <div id="character-name-input" style="display: none;">
                 <input type="text" id="name-input" placeholder="Enter character name">

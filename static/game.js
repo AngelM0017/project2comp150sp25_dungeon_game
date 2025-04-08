@@ -1650,13 +1650,13 @@ function retryGame() {
     playerPosition = { x: 400, y: 300 };
 }
 window.selectCharacter = function(choice) {
-    selectedCharacter = choice;
+    selectedCharacter = choice.toString(); // Convert to string to match server expectation
     // Remove selected class from all buttons
     document.querySelectorAll('.character-options button').forEach(btn => {
         btn.classList.remove('selected');
     });
     // Add selected class to clicked button
-    const selectedBtn = document.querySelector(`.character-options button:nth-child(${choice})`);
+    const selectedBtn = document.querySelector(`[data-character="${choice}"]`);
     if (selectedBtn) {
         selectedBtn.classList.add('selected');
         document.getElementById('character-name-input').style.display = 'block';
