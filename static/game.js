@@ -54,6 +54,21 @@ let currentFloorRooms = [];
 let totalRoomsInFloor = 0;
 let defeatedMonstersInFloor = 0;
 
+// Define selectCharacter function globally
+function selectCharacter(choice) {
+    selectedCharacter = choice.toString();
+    const buttons = document.querySelectorAll('.character-options button');
+    buttons.forEach(btn => btn.classList.remove('selected'));
+    
+    // Add selected class to clicked button
+    const selectedBtn = document.querySelector(`.character-options button:nth-child(${choice})`);
+    if (selectedBtn) {
+        selectedBtn.classList.add('selected');
+    }
+    
+    document.getElementById('character-name-input').style.display = 'block';
+}
+
 // Add click event listeners when document loads
 document.addEventListener('DOMContentLoaded', function() {
     // Add CSS for prompt screen positioning
