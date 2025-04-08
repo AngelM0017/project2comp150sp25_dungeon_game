@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, send_from_directory
 import random
 import time
 import json
@@ -91,6 +91,11 @@ class Monster(Character):
     def __init__(self, name, health, attack_power, defense):
         super().__init__(name, attack_power, health, 0, defense)
 
+    def attack_player(self, player):
+        damage = random.randint(1, self.attack_power)
+        actual_damage = player.take_damage(damage)
+        return actual_damage
+
 
 # Modify the following monster classes to inherit from Monster, not Character
 class Goblin(Monster):
@@ -166,7 +171,7 @@ def choose_character():
 
 
 # Starting the game and choosing a character
-#chosen_character = choose_character()
+chosen_character = choose_character()
 
 
 # Global Variables
@@ -180,9 +185,11 @@ def generate_dungeon_stage():
     if stage == 1:
         return land_of_the_dead
     elif stage == 2:
-        return frost_zone
-    else:
+        return lands_inbetween
+    elif stage == 3:
         return bottom_floor
+    else:
+        return boss_floor
 
 
 # Printing status of the game
@@ -343,27 +350,47 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/static/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('static', filename)
+
+
 # Define game areas with monster pools
-LAND_OF_DEAD = Area("The Land of the Dead", (1, 3), {
+land_of_the_dead = Area("The Land of the Dead", (1, 3), {
     "Goblin": {"health": (10, 25), "attack": (8, 13), "defense": (4, 15), "mana": (0, 0)},
     "Kobalt": {"health": (12, 17), "attack": (10, 15), "defense": (8, 15), "mana": (0, 0)},
     "Skeleton": {"health": (15, 25), "attack": (15, 20), "defense": (15, 20), "mana": (0, 0)}
 })
+land_of_the_dead.spawn_pool = [Goblin, Kobalt, Skeleton]
+land_of_the_dead.spawn_rate = [30, 60, 100]
+land_of_the_dead.current_monsters = 3
 
-LANDS_INBETWEEN = Area("The Lands Inbetween", (4, 5),{
+lands_inbetween = Area("The Lands Inbetween", (4, 5),{
     "FrostGoblin": {"health": (25, 32), "attack": (20,30), "defense": (10, 25), "mana": (5, 15)},
     "StoneGolem": {"health": (28, 35), "attack": (35, 45), "defense": (15, 30), "mana": (5, 15)},
     "FireTroll": {"health": (30,35),"attack": (32, 42),"defense": (12, 28),"mana": (5, 15)}
 })
-BOTTOM_FLOOR = Area("The Bottom Floor", (6, 6), {
+lands_inbetween.spawn_pool = [FrostRevenant, Kobalt, Skeleton]
+lands_inbetween.spawn_rate = [30, 60, 100]
+lands_inbetween.current_monsters = 3
+
+bottom_floor = Area("The Bottom Floor", (6, 6), {
     "FireGiant": {"health": (45, 69), "attack": (50, 75), "defense": (35, 55), "mana": (20, 30)},
     "Demon": {"health": (60, 72), "attack": (55, 75), "defense": (40, 55), "mana": (25, 30)},
     "Lich": {"health": (62, 80), "attack": (60, 70), "defense": (45, 55), "mana": (28, 30)}
 })
+bottom_floor.spawn_pool = [Goblin, Kobalt, Skeleton]
+bottom_floor.spawn_rate = [30, 60, 100]
+bottom_floor.current_monsters = 3
 
-BOSS_FLOOR = Area("The Tomb", (7, 7), {
+
+boss_floor = Area("The Tomb", (7, 7), {
     "LordOfTheTomb": {"health": (200, 200), "attack": (100, 125), "defense": (60, 60), "mana": (60, 70)}
 })
+boss_floor.spawn_pool = [Goblin, Kobalt, Skeleton]
+boss_floor.spawn_rate = [30, 60, 100]
+boss_floor.current_monsters = 1
+
 
 @app.route('/start_game', methods=['POST'])
 def start_game_route():
@@ -435,5 +462,6 @@ def attack():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
