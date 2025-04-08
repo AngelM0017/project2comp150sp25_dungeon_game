@@ -987,14 +987,19 @@ function spawnMonstersInRoom(room) {
 
 // Start the game
 function startGame() {
-    const name = document.getElementById('name-input').value;
+    const name = document.getElementById('name-input').value.trim();
+    const nameInput = document.getElementById('name-input');
+    
     if (!name) {
-        alert('Please enter a character name');
+        nameInput.style.borderColor = 'red';
+        nameInput.placeholder = 'Name is required!';
         return;
     }
-
+    
     if (!selectedCharacter) {
-        alert('Please select a character class first');
+        const buttons = document.querySelectorAll('.character-options button');
+        buttons.forEach(btn => btn.style.border = '2px solid red');
+        setTimeout(() => buttons.forEach(btn => btn.style.border = ''), 1000);
         return;
     }
 
@@ -1120,7 +1125,31 @@ function startGame() {
     })
     .catch(error => {
         console.error('Error starting game:', error);
-        alert('Failed to start game. Please try again.');
+        // Silently retry the game start
+        setTimeout(() => {
+            fetch('/start_game', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    choice: selectedCharacter,
+                    name: name
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                selectedCharacterType = data;
+                selectedCharacterType.maxHealth = selectedCharacterType.health;
+                if (['Mage', 'FrostRevenant', 'CelestialMonk'].includes(selectedCharacterType.type)) {
+                    selectedCharacterType.maxMana = selectedCharacterType.mana;
+                }
+                document.getElementById('character-select').style.display = 'none';
+                document.getElementById('character-name-input').style.display = 'none';
+                document.getElementById('game-screen').style.display = 'block';
+                initGame(data);
+            });
+        }, 1000);
     });
 }
 

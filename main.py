@@ -367,20 +367,32 @@ BOSS_FLOOR = Area("The Tomb", (7, 7), {
 
 @app.route('/start_game', methods=['POST'])
 def start_game_route():
-    data = request.get_json()
-    character_choice = data.get('choice')
-    character_name = data.get('name')
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({
+                'name': 'Player',
+                'attack': 10,
+                'health': 100,
+                'mana': 50,
+                'defense': 5,
+                'type': 'Swordsman',
+                'currentFloor': 1
+            })
+            
+        character_choice = str(data.get('choice', '1'))
+        character_name = data.get('name', 'Player')
 
-    if character_choice == "1":
-        character = Swordsman(character_name)
-    elif character_choice == "2":
-        character = Mage(character_name)
-    elif character_choice == "3":
-        character = FrostRevenant(character_name)
-    elif character_choice == "4":
-        character = CelestialMonk(character_name)
-    else:
-        return jsonify({'error': 'Invalid character choice'})
+        if character_choice == "1":
+            character = Swordsman(character_name)
+        elif character_choice == "2":
+            character = Mage(character_name)
+        elif character_choice == "3":
+            character = FrostRevenant(character_name)
+        elif character_choice == "4":
+            character = CelestialMonk(character_name)
+        else:
+            character = Swordsman(character_name)
 
     # Return character stats and initial floor
     return jsonify({
