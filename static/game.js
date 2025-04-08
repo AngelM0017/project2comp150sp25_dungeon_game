@@ -1651,6 +1651,15 @@ function retryGame() {
 }
 window.selectCharacter = function(choice) {
     selectedCharacter = choice;
+    // Remove selected class from all buttons
+    document.querySelectorAll('.character-options button').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    // Add selected class to clicked button
+    const selectedBtn = document.querySelector(`.character-options button:nth-child(${choice})`);
+    if (selectedBtn) {
+        selectedBtn.classList.add('selected');
+    }
     document.getElementById('character-name-input').style.display = 'block';
 };
 

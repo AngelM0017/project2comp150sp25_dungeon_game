@@ -37,6 +37,22 @@ button:hover {
   transform: scale(1.05);
 }
 
+button.selected {
+  background: #8a3232;
+  box-shadow: 0 0 15px #ff6b6b;
+  border: 2px solid #ff9999;
+  animation: glowing 1.5s infinite alternate;
+}
+
+@keyframes glowing {
+  from {
+    box-shadow: 0 0 5px #ff6b6b;
+  }
+  to {
+    box-shadow: 0 0 20px #ff6b6b;
+  }
+}
+
 button:active {
   transform: scale(0.98);
 }
