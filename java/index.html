@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dungeon Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-screen" class="game-container">
+        <div id="character-select">
+            <h2>Choose your character</h2>
+            <div class="character-buttons">
+                <button class="character-btn" data-char="Swordsman">Swordsman</button>
+                <button class="character-btn" data-char="Mage">Mage</button>
+                <button class="character-btn" data-char="FrostRevenant">Frost Revenant</button>
+                <button class="character-btn" data-char="CelestialMonk">Celestial Monk</button>
+            </div>
+        </div>
+        <div id="character-name-input" style="display: none;">
+            <input type="text" id="name-input" placeholder="Enter character name">
+            <button id="start-button">Start Game</button>
+        </div>
+    </div>
+    <script type="module" src="game.js"></script>
+</body>
+</html>
