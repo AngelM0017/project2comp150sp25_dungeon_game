@@ -9,6 +9,46 @@ let playerPosition = { x: 400, y: 300 };
 let currentRoom = { x: 0, y: 0 };
 const rooms = new Map();
 const moveSpeed = 5;
+const keys = {
+    w: false,
+    a: false,
+    s: false,
+    d: false
+};
+
+// Add keyboard event listeners
+document.addEventListener('keydown', (e) => {
+    const key = e.key.toLowerCase();
+    if (keys.hasOwnProperty(key)) {
+        keys[key] = true;
+    }
+});
+
+document.addEventListener('keyup', (e) => {
+    const key = e.key.toLowerCase();
+    if (keys.hasOwnProperty(key)) {
+        keys[key] = false;
+    }
+});
+
+// Add movement update function
+function updateMovement() {
+    if (!selectedCharacterType) return;
+    
+    if (keys.w) playerPosition.y -= moveSpeed;
+    if (keys.s) playerPosition.y += moveSpeed;
+    if (keys.a) playerPosition.x -= moveSpeed;
+    if (keys.d) playerPosition.x += moveSpeed;
+    
+    // Keep player within bounds
+    playerPosition.x = Math.max(32, Math.min(736, playerPosition.x));
+    playerPosition.y = Math.max(32, Math.min(436, playerPosition.y));
+    
+    updatePlayerPosition();
+}
+
+// Add movement interval
+setInterval(updateMovement, 16);
 
 // Prevent function redefinitions that cause issues
 let originalUpdatePlayerStats;
