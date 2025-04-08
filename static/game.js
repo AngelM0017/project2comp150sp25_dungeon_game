@@ -1659,8 +1659,15 @@ window.selectCharacter = function(choice) {
     const selectedBtn = document.querySelector(`.character-options button:nth-child(${choice})`);
     if (selectedBtn) {
         selectedBtn.classList.add('selected');
+        document.getElementById('character-name-input').style.display = 'block';
     }
-    document.getElementById('character-name-input').style.display = 'block';
 };
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners for character selection buttons
+    document.querySelectorAll('.character-options button').forEach((btn, index) => {
+        btn.addEventListener('click', () => window.selectCharacter(index + 1));
+    });
+});
 
 // Rest of the existing game.js code...
