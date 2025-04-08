@@ -509,20 +509,29 @@ document.addEventListener('DOMContentLoaded', function() {
       combatLogElement.scrollTop = combatLogElement.scrollHeight;
     }
 
-    // Make selectCharacter available globally
+// Make selectCharacter available globally
     window.selectCharacter = function(choice) {
-        selectedCharacter = choice.toString();
+        const characterMap = {
+            1: 'Swordsman',
+            2: 'Mage',
+            3: 'FrostRevenant',
+            4: 'CelestialMonk'
+        };
+
+        selectedCharacter = characterMap[choice];
+
         const buttons = document.querySelectorAll('.character-options button');
         buttons.forEach(btn => btn.classList.remove('selected'));
-        
-        // Add selected class to clicked button
+
         const selectedBtn = document.querySelector(`.character-options button:nth-child(${choice})`);
         if (selectedBtn) {
             selectedBtn.classList.add('selected');
         }
-        
+
         document.getElementById('character-name-input').style.display = 'block';
     };
+
+
 
     // Add click feedback to all buttons
     document.querySelectorAll('button').forEach(button => {

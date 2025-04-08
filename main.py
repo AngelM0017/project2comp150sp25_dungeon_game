@@ -127,7 +127,7 @@ class Area:
         return f"{self.name} (Floors {self.floor_range[0]}-{self.floor_range[1]})"
 
 
-def choose_character():
+def choose_character() -> Character:
     print("Welcome to the Tomb of the dead!,"
           "Enter at your own peril ")
     print("Choose your character class:")
@@ -166,7 +166,7 @@ def choose_character():
 
 
 # Starting the game and choosing a character
-#chosen_character = choose_character()
+# chosen_character = choose_character()
 
 
 # Global Variables
@@ -174,15 +174,15 @@ stage = 1
 
 
 # Event-based random dungeon generation
-def generate_dungeon_stage():
+def generate_dungeon_stage() -> Area:
     # Random dungeon stage factor (can affect difficulty)
     print(f"Stage Value: {stage}")
     if stage == 1:
-        return land_of_the_dead
+        return LAND_OF_THE_DEAD
     elif stage == 2:
-        return frost_zone
+        return LANDS_INBETWEEN
     else:
-        return bottom_floor
+        return BOTTOM_FLOOR
 
 
 # Printing status of the game
@@ -267,71 +267,6 @@ def getMonster(area):
             return monster_class  # Return the class itself (e.g., Goblin, Kobalt)
 
 
-# Game loop
-def start_game():
-    """Start the game with proper initialization and error handling."""
-    try:
-        # Initial random stage setup
-        area = generate_dungeon_stage()
-        print(f"\nYou are about to enter the {area.name}. Prepare yourself!")
-
-        # Prepare monsters for this dungeon
-        monster_count = random.randint(1, area.current_monsters)
-        area.current_monsters -= monster_count
-        if area.current_monsters == 0:
-            global stage
-            stage += 1
-        monsters = []
-
-        # Create monsters for the current level
-        for i in range(monster_count):
-            monster_type = getMonster(area)
-            if monster_type:
-                monster_name = f"{monster_type.__name__}-{i+1}"
-                monster_health = random.randint(10, 50)
-                monster_attack = random.randint(5, 20)
-                monster_defense = random.randint(2, 5)
-                monsters.append(monster_type(monster_name, monster_health, monster_attack, monster_defense))
-
-        # Game loop
-        dungeon_level = 1
-        while chosen_character.is_alive():
-            print(f"\n--- Dungeon Level {dungeon_level} ---")
-            random_event(chosen_character)
-
-            if not combat(chosen_character, monsters):
-                break
-
-            # Proceed to next dungeon level
-            dungeon_level += 1
-            monsters = []  # Reset monsters after level
-
-            if dungeon_level < 7:
-                # Re-generate new monsters for next level
-                monster_count = random.randint(3, 6)
-                for i in range(monster_count):
-                    monster_type = getMonster(area)
-                    if monster_type:
-                        monster_name = f"{monster_type.__name__}-{i+1}"
-                        monster_health = random.randint(15, 30)
-                        monster_attack = random.randint(1, 10)
-                        monster_defense = random.randint(2, 5)
-                        monsters.append(monster_type(monster_name, monster_health, monster_attack, monster_defense))
-            elif dungeon_level == 7:
-                # Final Boss Battle
-                print('You have arrived at the bottom of hell!')
-                final_boss = Monster("LordOfTheTomb", 200, 100, 60)
-                final_boss.mana = 60
-                monsters.append(final_boss)
-            else:
-                end_game()
-                return
-
-        print(f"\n{chosen_character.name} has died. Game Over!")
-    except Exception as e:
-        print(f"An error occurred: {str(e)}")
-        end_game()
-
 
 def end_game():
     print("Game Over! Better luck next time.")
@@ -344,7 +279,7 @@ def index():
 
 
 # Define game areas with monster pools
-LAND_OF_DEAD = Area("The Land of the Dead", (1, 3), {
+LAND_OF_THE_DEAD = Area("The Land of the Dead", (1, 3), {
     "Goblin": {"health": (10, 25), "attack": (8, 13), "defense": (4, 15), "mana": (0, 0)},
     "Kobalt": {"health": (12, 17), "attack": (10, 15), "defense": (8, 15), "mana": (0, 0)},
     "Skeleton": {"health": (15, 25), "attack": (15, 20), "defense": (15, 20), "mana": (0, 0)}
@@ -371,18 +306,19 @@ def start_game_route():
     character_choice = data.get('choice')
     character_name = data.get('name')
 
-    if character_choice == "1":
+    print(f"Received start_game: choice={character_choice}, name={character_name}")  # debug line
+
+    if character_choice == "Swordsman":
         character = Swordsman(character_name)
-    elif character_choice == "2":
+    elif character_choice == "Mage":
         character = Mage(character_name)
-    elif character_choice == "3":
+    elif character_choice == "FrostRevenant":
         character = FrostRevenant(character_name)
-    elif character_choice == "4":
+    elif character_choice == "CelestialMonk":
         character = CelestialMonk(character_name)
     else:
-        return jsonify({'error': 'Invalid character choice'})
+        return jsonify({'error': f'Invalid character choice: {character_choice}'}), 400
 
-    # Return character stats and initial floor
     return jsonify({
         'name': character.name,
         'attack': character.attack_power,
@@ -392,6 +328,8 @@ def start_game_route():
         'type': character.__class__.__name__,
         'currentFloor': 1
     })
+
+
 
 
 @app.route('/attack', methods=['POST'])
@@ -441,13 +379,13 @@ def calculate_ability_damage(base_damage, character_level):
     return base_damage * (1 + 0.1 * character_level)
 
 
-# Cache frequently accessed elements
-class UICache:
-    def __init__(self):
-        self.prompt_screen = document.getElementById('prompt-screen')
-        self.context_buttons = document.getElementById('context-buttons')
-        # ... other elements
+# # Cache frequently accessed elements
+# class UICache:
+#     def __init__(self):
+#         self.prompt_screen = document.getElementById('prompt-screen')
+#         self.context_buttons = document.getElementById('context-buttons')
+#         # ... other elements
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=8080)
