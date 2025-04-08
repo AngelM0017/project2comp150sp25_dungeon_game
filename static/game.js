@@ -1649,5 +1649,9 @@ function retryGame() {
     // Reset player position
     playerPosition = { x: 400, y: 300 };
 }
-// Moving the contents of java/game.js to static/game.js
-// All code from java/game.js goes here
+window.selectCharacter = function(choice) {
+    selectedCharacter = choice;
+    document.getElementById('character-name-input').style.display = 'block';
+};
+
+// Rest of the existing game.js code...
