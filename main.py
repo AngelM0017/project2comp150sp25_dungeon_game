@@ -435,5 +435,19 @@ def attack():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+# Consider adding a balance system
+def calculate_ability_damage(base_damage, character_level):
+    return base_damage * (1 + 0.1 * character_level)
+
+
+# Cache frequently accessed elements
+class UICache:
+    def __init__(self):
+        self.prompt_screen = document.getElementById('prompt-screen')
+        self.context_buttons = document.getElementById('context-buttons')
+        # ... other elements
+
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -1,95 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tomb of the Dead</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="game-container">
-        <div id="character-select" class="screen">
-            <h1>Welcome to the Tomb of the Dead!</h1>
+    <main class="game-container">
+        <section id="character-select" class="screen" aria-labelledby="character-select-title">
+            <h1 id="character-select-title">Welcome to the Tomb of the Dead!</h1>
             <h2>Choose your character:</h2>
             <div class="character-options">
-                <button onclick="selectCharacter(1)" data-character="1">Swordsman</button>
-                <button onclick="selectCharacter(2)" data-character="2">Mage</button>
-                <button onclick="selectCharacter(3)" data-character="3">FrostRevenant</button>
-                <button onclick="selectCharacter(4)" data-character="4">CelestialMonk</button>
+                <button onclick="window.selectCharacter(1)">Swordsman</button>
+                <button onclick="window.selectCharacter(2)">Mage</button>
+                <button onclick="window.selectCharacter(3)">FrostRevenant</button>
+                <button onclick="window.selectCharacter(4)">CelestialMonk</button>
             </div>
             <div id="character-name-input" style="display: none;">
-                <input type="text" id="name-input" placeholder="Enter character name">
+                <input type="text" id="name-input" placeholder="Enter character name" aria-label="Character Name">
                 <button onclick="startGame()">Start Game</button>
             </div>
-        </div>
+        </section>
 
-        <div id="game-screen" class="screen" style="display: none;">
+        <section id="game-screen" class="screen" style="display: none;" aria-labelledby="game-screen-title">
             <div class="game-layout">
                 <div class="game-world">
                     <div class="game-environment">
-                        <div class="player"></div>
+                        <div class="player" role="img" aria-label="Player"></div>
                         <div id="monsters-area"></div>
                     </div>
                     <button id="fight-button" style="display: none;">Fight!</button>
                     <div class="prompt-screen" id="prompt-screen">
-                      <!-- Left Section - Player Stats -->
-                      <div class="player-status">
-                        <h3 id="player-name">Character Name</h3>
-                        <div>Health: <span id="player-health">100</span>/<span id="player-max-health">100</span></div>
-                        <div class="stat-bar">
-                          <div class="health-fill" id="health-bar" style="width: 100%"></div>
+                        <div class="player-status" aria-labelledby="player-name">
+                            <h3 id="player-name">Character Name</h3>
+                            <div>Health: <span id="player-health">100</span>/<span id="player-max-health">100</span></div>
+                            <div class="stat-bar">
+                                <div class="health-fill" id="health-bar" style="width: 100%"></div>
+                            </div>
+                            <div id="mana-container">
+                                <div>Mana: <span id="player-mana">50</span>/<span id="player-max-mana">50</span></div>
+                                <div class="stat-bar">
+                                    <div class="mana-fill" id="mana-bar" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div>Attack: <span id="player-attack">10</span></div>
+                            <div>Defense: <span id="player-defense">5</span></div>
+                            <div>Floor: <span id="current-floor">1</span></div>
                         </div>
 
-                        <div id="mana-container">
-                          <div>Mana: <span id="player-mana">50</span>/<span id="player-max-mana">50</span></div>
-                          <div class="stat-bar">
-                            <div class="mana-fill" id="mana-bar" style="width: 100%"></div>
-                          </div>
+                        <div class="action-area" id="action-area">
+                            <div class="context-message" id="context-message">
+                                Explore the dungeon...
+                            </div>
+                            <div class="context-buttons" id="context-buttons">
+                                <!-- Dynamic buttons will appear here -->
+                            </div>
                         </div>
 
-                        <div>Attack: <span id="player-attack">10</span></div>
-                        <div>Defense: <span id="player-defense">5</span></div>
-                        <div>Floor: <span id="current-floor">1</span></div>
-                      </div>
-
-                      <!-- Middle Section - Action Area -->
-                      <div class="action-area" id="action-area">
-                        <div class="context-message" id="context-message">
-                          Explore the dungeon...
+                        <div class="monster-info" id="monster-info" aria-labelledby="monster-name">
+                            <h3 id="monster-name">Monster Name</h3>
+                            <div>Health: <span id="monster-health">50</span>/<span id="monster-max-health">50</span></div>
+                            <div class="monster-health">
+                                <div class="monster-health-fill" id="monster-health-bar" style="width: 100%"></div>
+                            </div>
+                            <div>Attack: <span id="monster-attack">8</span></div>
+                            <div>Defense: <span id="monster-defense">3</span></div>
+                            <div id="monster-description">Description goes here</div>
                         </div>
-                        <div class="context-buttons" id="context-buttons">
-                          <!-- Dynamic buttons will appear here -->
-                        </div>
-                      </div>
-
-                      <!-- Right Section - Combat/Monster Info -->
-                      <div class="monster-info" id="monster-info">
-                        <h3 id="monster-name">Monster Name</h3>
-                        <div>Health: <span id="monster-health">50</span>/<span id="monster-max-health">50</span></div>
-                        <div class="monster-health">
-                          <div class="monster-health-fill" id="monster-health-bar" style="width: 100%"></div>
-                        </div>
-                        <div>Attack: <span id="monster-attack">8</span></div>
-                        <div>Defense: <span id="monster-defense">3</span></div>
-                        <div id="monster-description">Description goes here</div>
-                      </div>
                     </div>
                 </div>
-                <div class="info-panel">
+                <aside class="info-panel">
                     <div class="status-bar">
                         <div id="player-stats"></div>
                     </div>
                     <div id="moveset-buttons" class="moveset-container" style="display: none;"></div>
                     <div id="monster-stats" class="monster-stats" style="display: none;"></div>
                     <div id="combat-log" class="combat-log"></div>
-                </div>
+                </aside>
             </div>
-        </div>
+        </section>
 
-        <div id="game-over" class="screen" style="display: none;">
-            <h1>You Have Been Slain!</h1>
+        <section id="game-over" class="screen" style="display: none;" aria-labelledby="game-over-title">
+            <h1 id="game-over-title">You Have Been Slain!</h1>
             <button onclick="retryGame()">Try Again</button>
-        </div>
-    </div>
-    <script src="{{ url_for('static', filename='game.js') }}"></script>
-
+        </section>
+    </main>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>

@@ -252,9 +252,6 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="stat-item">Attack: <span id="player-attack">0</span></div>
             <div class="stat-item">Defense: <span id="player-defense">0</span></div>
           </div>
-          <div class="stats-row">
-            <div class="stat-item">Gold: <span id="player-gold">0</span></div>
-          </div>
           <div class="floor-info">Floor: <span id="current-floor">1</span></div>
           <div id="monster-info" style="display: none;">
             <h3 id="monster-name"></h3>
@@ -506,6 +503,59 @@ function initPromptScreen() {
     setInterval(checkProximityInteractions, 100);
 }
 
+// Create the prompt screen element
+function createPromptScreen() {
+    const gameScreen = document.getElementById('game-screen');
+    if (!gameScreen) return;
+
+    // Check if prompt screen already exists
+    let promptScreen = document.getElementById('prompt-screen');
+    if (!promptScreen) {
+        const promptScreenDiv = document.createElement('div');
+        promptScreenDiv.id = 'prompt-screen';
+        promptScreenDiv.innerHTML = `
+          <h2 id="player-name"></h2>
+          <div id="health-container">
+            <div class="status-label">Health:</div>
+            <div class="status-bar">
+              <div id="health-bar" class="bar-fill"></div>
+            </div>
+            <div class="status-text"><span id="player-health">100</span>/<span id="player-max-health">100</span></div>
+          </div>
+          <div id="mana-container">
+            <div class="status-label">Mana:</div>
+            <div class="status-bar">
+              <div id="mana-bar" class="bar-fill blue"></div>
+            </div>
+            <div class="status-text"><span id="player-mana">50</span>/<span id="player-max-mana">50</span></div>
+          </div>
+          <div class="stats-row">
+            <div class="stat-item">Attack: <span id="player-attack">0</span></div>
+            <div class="stat-item">Defense: <span id="player-defense">0</span></div>
+          </div>
+          <div class="floor-info">Floor: <span id="current-floor">1</span></div>
+          <div id="monster-info" style="display: none;">
+            <h3 id="monster-name"></h3>
+            <div id="monster-health-container">
+              <div class="status-label">Monster Health:</div>
+              <div class="status-bar">
+                <div id="monster-health-bar" class="bar-fill red"></div>
+              </div>
+              <div class="status-text"><span id="monster-health">100</span>/<span id="monster-max-health">100</span></div>
+            </div>
+            <div class="stats-row">
+              <div class="stat-item">Attack: <span id="monster-attack">0</span></div>
+              <div class="stat-item">Defense: <span id="monster-defense">0</span></div>
+            </div>
+            <div id="monster-description" class="monster-desc"></div>
+          </div>
+          <div id="context-message" class="context-message">Explore the dungeon...</div>
+          <div id="context-buttons" class="context-buttons"></div>
+        `;
+        gameScreen.insertBefore(promptScreenDiv, gameScreen.firstChild);
+    }
+}
+
 // Update player stats in the prompt screen
 function updatePlayerStatusDisplay() {
     if (!selectedCharacterType) return;
@@ -528,7 +578,6 @@ function updatePlayerStatusDisplay() {
     document.getElementById('player-attack').textContent = Math.round(player.attack);
     document.getElementById('player-defense').textContent = player.defense;
     document.getElementById('current-floor').textContent = currentFloor;
-    document.getElementById('player-gold').textContent = player.gold || 0;
 }
 
 // Functions to show/hide prompt screen
@@ -1281,9 +1330,6 @@ function handleLocalAttack(monster, damage, freezeApplied) {
         monster.isAlive = false;
         addToCombatLog(`${monster.name} has been defeated!`);
 
-        // Handle monster drops
-        handleMonsterDrops(monster);
-
         // Add mana for mana-using characters when defeating monsters
         if (['Mage', 'FrostRevenant', 'CelestialMonk'].includes(selectedCharacterType.type)) {
             selectedCharacterType.mana = Math.min(
@@ -1320,51 +1366,6 @@ function handleLocalAttack(monster, damage, freezeApplied) {
             document.getElementById('monster-stats').style.display = 'none';
         }
         handlePostCombatEvent();
-    }
-}
-
-// Add new function for handling monster drops
-function handleMonsterDrops(monster) {
-    // Drop rates
-    const dropRates = {
-        healthPotion: 0.3,  // 30% chance
-        gold: 0.5,         // 50% chance
-        weapon: 0.2        // 20% chance
-    };
-
-    // Health Potion Drop
-    if (Math.random() < dropRates.healthPotion) {
-        const healAmount = Math.floor((selectedCharacterType.maxHealth || 100) * 0.2);
-        selectedCharacterType.health = Math.min(
-            selectedCharacterType.health + healAmount,
-            selectedCharacterType.maxHealth || 100
-        );
-        addToCombatLog(`${monster.name} dropped a health potion! Restored ${healAmount} HP`);
-    }
-
-    // Gold Drop
-    if (Math.random() < dropRates.gold) {
-        const baseGold = 5;
-        const goldAmount = baseGold + (currentFloor - 1) * 5;
-        if (!selectedCharacterType.gold) {
-            selectedCharacterType.gold = 0;
-        }
-        selectedCharacterType.gold += goldAmount;
-        addToCombatLog(`${monster.name} dropped ${goldAmount} gold!`);
-
-        // Update gold display in prompt screen
-        const goldDisplay = document.getElementById('player-gold');
-        if (goldDisplay) {
-            goldDisplay.textContent = selectedCharacterType.gold;
-        }
-    }
-
-    // Weapon/Attack Boost Drop
-    if (Math.random() < dropRates.weapon) {
-        const baseAttackBoost = 5;
-        const attackBoost = baseAttackBoost + (currentFloor - 1) * 5;
-        selectedCharacterType.attack += attackBoost;
-        addToCombatLog(`${monster.name} dropped a new weapon! Attack increased by ${attackBoost}!`);
     }
 }
 
@@ -1647,153 +1648,4 @@ function retryGame() {
 
     // Reset player position
     playerPosition = { x: 400, y: 300 };
-}
-
-// Monster generation and management functions
-function getMonsterPoolForFloor(floor) {
-    const monsterPools = {
-        1: [
-            { name: 'Slime', type: 'normal', health: 30, maxHealth: 30, attack: 5, defense: 2, description: 'A basic slime monster' },
-            { name: 'Rat', type: 'normal', health: 25, maxHealth: 25, attack: 7, defense: 1, description: 'A quick little rat' }
-        ],
-        2: [
-            { name: 'Skeleton', type: 'undead', health: 45, maxHealth: 45, attack: 8, defense: 3, description: 'An animated skeleton' },
-            { name: 'Ghost', type: 'spirit', health: 35, maxHealth: 35, attack: 10, defense: 2, description: 'A haunting spirit' }
-        ],
-        3: [
-            { name: 'Zombie', type: 'undead', health: 60, maxHealth: 60, attack: 12, defense: 4, description: 'A shambling zombie' },
-            { name: 'Dark Elf', type: 'humanoid', health: 50, maxHealth: 50, attack: 15, defense: 3, description: 'A cunning dark elf' }
-        ],
-        4: [
-            { name: 'Golem', type: 'construct', health: 80, maxHealth: 80, attack: 15, defense: 6, description: 'A stone golem' },
-            { name: 'Wraith', type: 'spirit', health: 65, maxHealth: 65, attack: 18, defense: 4, description: 'A malevolent wraith' }
-        ],
-        5: [
-            { name: 'Demon', type: 'demon', health: 90, maxHealth: 90, attack: 20, defense: 7, description: 'A fearsome demon' },
-            { name: 'Dragon Whelp', type: 'dragon', health: 75, maxHealth: 75, attack: 22, defense: 5, description: 'A young dragon' }
-        ],
-        6: [
-            { name: 'Lich', type: 'undead', health: 100, maxHealth: 100, attack: 25, defense: 8, description: 'A powerful undead sorcerer' },
-            { name: 'Demon Lord', type: 'demon', health: 110, maxHealth: 110, attack: 28, defense: 7, description: 'A mighty demon lord' }
-        ],
-        7: [
-            { name: 'Lord of the Tomb', type: 'boss', health: 150, maxHealth: 150, attack: 30, defense: 10, description: 'The final boss of the dungeon' }
-        ]
-    };
-
-    // Scale monster stats based on floor level
-    return monsterPools[floor].map(monster => ({
-        ...monster,
-        health: Math.floor(monster.health * (1 + (floor - 1) * 0.2)),
-        maxHealth: Math.floor(monster.maxHealth * (1 + (floor - 1) * 0.2)),
-        attack: Math.floor(monster.attack * (1 + (floor - 1) * 0.15)),
-        defense: Math.floor(monster.defense * (1 + (floor - 1) * 0.1)),
-        isAlive: true
-    }));
-}
-
-function generateMonsters() {
-    const monsterPool = getMonsterPoolForFloor(currentFloor);
-    const count = currentFloor === 7 ? 1 : Math.min(3, Math.floor(Math.random() * 3) + 1);
-    const monsters = [];
-
-    for (let i = 0; i < count; i++) {
-        const monster = { ...monsterPool[Math.floor(Math.random() * monsterPool.length)] };
-        monsters.push(monster);
-    }
-
-    return monsters;
-}
-
-function getMonsterColor(monsterType) {
-    const colorMap = {
-        'normal': '#8a9b6e',    // Earthy green for basic monsters
-        'undead': '#6e8a9b',    // Pale blue for undead
-        'spirit': '#9b6e8a',    // Purple for spirits
-        'humanoid': '#8a6e9b',  // Dark purple for humanoids
-        'construct': '#9b8a6e', // Brown for constructs
-        'demon': '#9b6e6e',     // Red for demons
-        'dragon': '#6e9b6e',    // Green for dragons
-        'boss': '#c41e3a'       // Crimson for boss
-    };
-
-    return colorMap[monsterType] || '#888888'; // Default gray if type not found
-}
-
-function updateMonsterPositions() {
-    if (!inBattleMode) {
-        monsterSprites.forEach((sprite, index) => {
-            if (!currentMonsters[index] || !currentMonsters[index].isAlive) return;
-
-            // Calculate direction to player
-            const dx = playerPosition.x - sprite.x;
-            const dy = playerPosition.y - sprite.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-
-            // Move towards player if within range, otherwise move randomly
-            if (distance < 150 && distance > 32) {
-                // Move towards player
-                sprite.x += (dx / distance) * 2;
-                sprite.y += (dy / distance) * 2;
-            } else if (distance > 32) {
-                // Random movement
-                sprite.x += (Math.random() - 0.5) * 4;
-                sprite.y += (Math.random() - 0.5) * 4;
-            }
-
-            // Keep monsters within bounds
-            sprite.x = Math.max(32, Math.min(736, sprite.x));
-            sprite.y = Math.max(32, Math.min(436, sprite.y));
-
-            // Update sprite position
-            if (sprite.element) {
-                sprite.element.style.left = sprite.x + 'px';
-                sprite.element.style.top = sprite.y + 'px';
-            }
-        });
-    }
-}
-
-function displayMonsterStats(monster) {
-    const monsterStats = document.getElementById('monster-stats');
-    if (!monsterStats || !monster) return;
-
-    monsterStats.innerHTML = `
-        <div class="monster-header">
-            <h3>${monster.name}</h3>
-            <div class="monster-type">${monster.type}</div>
-        </div>
-        <div class="monster-health-bar">
-            <div class="health-fill" style="width: ${(monster.health / monster.maxHealth) * 100}%"></div>
-            <div class="health-text">${monster.health}/${monster.maxHealth} HP</div>
-        </div>
-        <div class="monster-stats">
-            <div>Attack: ${monster.attack}</div>
-            <div>Defense: ${monster.defense}</div>
-        </div>
-        <div class="monster-description">${monster.description}</div>
-    `;
-    monsterStats.style.display = 'block';
-}
-
-function getRequiredMonstersForFloor() {
-    // Higher floors require more monsters to be defeated
-    const requirements = {
-        1: 3,  // First floor: 3 monsters
-        2: 4,  // Second floor: 4 monsters
-        3: 5,  // Third floor: 5 monsters
-        4: 6,  // Fourth floor: 6 monsters
-        5: 7,  // Fifth floor: 7 monsters
-        6: 8,  // Sixth floor: 8 monsters
-        7: 1   // Final floor: Just the boss
-    };
-    return requirements[currentFloor] || 3;
-}
-
-// Add validation for character selection
-function selectCharacter(characterType) {
-     if (!movesets[characterType]) {
-        throw new Error("Invalid character type");
-    }
-    // ... rest of selection logic
 }
