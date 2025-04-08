@@ -1,3 +1,504 @@
+.game-container {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+}
 
+.screen {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+}
+
+.character-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+}
+
+button {
+  background: #4a1c1c;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: #6e2929;
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.status-bar {
+  background: rgba(42, 42, 42, 0.7);
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.moveset-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.move-btn {
+  background: #3a1c1c;
+  padding: 8px 15px;
+  font-size: 14px;
+  border: 1px solid #6e2929;
+}
+
+.move-btn.active {
+  background: #6e2929;
+  border-color: #ff9999;
+  box-shadow: 0 0 15px #ff9999;
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+      box-shadow: 0 0 5px #ff9999;
+  }
+  to {
+      box-shadow: 0 0 20px #ff9999;
+  }
+}
+
+.combat-area {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+#combat-log {
+  margin-top: 20px;
+  padding: 10px;
+  background: #2a2a2a;
+  height: 150px;
+  overflow-y: auto;
+  border-radius: 5px;
+}
+
+.game-layout {
+  display: grid;
+  grid-template-columns: 75% 25%;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.game-world {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: auto;
+}
+
+.game-environment {
+  background: #1a0f0f;
+  image-rendering: pixelated;
+  position: relative;
+  height: 100vh;
+  border: 4px solid #2a1f1f;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Prompt Screen Container */
+.prompt-screen {
+position: fixed;
+bottom: 0;
+left: 0;
+width: 100%;
+height: 15vh;
+background-color: rgba(20, 20, 30, 0.9);
+border-top: 2px solid #6a5acd;
+color: #fff;
+font-family: 'Arial', sans-serif;
+display: flex;
+z-index: 100;
+transition: height 0.3s ease;
+}
+
+/* Left Section - Player Stats */
+.player-status {
+width: 25%;
+padding: 10px;
+border-right: 1px solid #6a5acd;
+overflow-y: auto;
+}
+
+.player-status h3 {
+margin: 0 0 5px 0;
+color: #ffd700;
+font-size: 1em;
+}
+
+.stat-bar {
+height: 15px;
+background-color: #333;
+border-radius: 10px;
+margin: 5px 0;
+position: relative;
+}
+
+.health-fill {
+height: 100%;
+background-color: #ff3e3e;
+border-radius: 10px;
+transition: width 0.3s ease;
+}
+
+.mana-fill {
+height: 100%;
+background-color: #3e9bff;
+border-radius: 10px;
+transition: width 0.3s ease;
+}
+
+/* Middle Section - Action Area */
+.action-area {
+width: 50%;
+padding: 10px;
+display: flex;
+flex-direction: column;
+}
+
+.context-message {
+height: 30%;
+color: #ffd700;
+font-size: 0.9em;
+text-align: center;
+margin-bottom: 5px;
+}
+
+.context-buttons {
+height: 70%;
+display: flex;
+flex-wrap: wrap;
+gap: 5px;
+justify-content: center;
+align-items: center;
+}
+
+/* Right Section - Combat/Monster Info */
+.monster-info {
+width: 25%;
+padding: 10px;
+border-left: 1px solid #6a5acd;
+overflow-y: auto;
+display: none; /* Hidden by default, shown during combat */
+}
+
+.monster-info h3 {
+margin: 0 0 5px 0;
+color: #ff7700;
+font-size: 1em;
+}
+
+.monster-health {
+height: 10px;
+background-color: #333;
+border-radius: 10px;
+margin: 5px 0;
+position: relative;
+}
+
+.monster-health-fill {
+height: 100%;
+background-color: #ff3e3e;
+border-radius: 10px;
+transition: width 0.3s ease;
+}
+
+/* Button Styles */
+.action-button {
+padding: 8px 15px;
+border: none;
+border-radius: 5px;
+background-color: #6a5acd;
+color: white;
+font-weight: bold;
+cursor: pointer;
+transition: all 0.2s;
+}
+
+.action-button:hover {
+background-color: #8a7aed;
+transform: translateY(-2px);
+}
+
+.action-button:active {
+transform: translateY(1px);
+}
+
+.fight-button {
+background-color: #d32f2f;
+}
+
+.loot-button {
+background-color: #ffc107;
+color: #333;
+}
+
+.ability-button {
+background-color: #3f51b5;
+margin: 3px;
+font-size: 0.85em;
+flex-grow: 1;
+max-width: 45%;
+}
+
+/* Combat mode styles */
+.prompt-screen.combat-mode .monster-info {
+display: block;
+}
+
+.prompt-screen.combat-mode .action-area {
+background-color: rgba(80, 0, 0, 0.3);
+}
+
+/* Treasure mode styles */
+.prompt-screen.treasure-mode .action-area {
+background-color: rgba(100, 84, 0, 0.3);
+}
+
+/* Animations */
+@keyframes pulse {
+0% { opacity: 0.7; }
+50% { opacity: 1; }
+100% { opacity: 0.7; }
+}
+
+.urgent-action {
+animation: pulse 1.5s infinite;
+}
+
+.room {
+  position: relative;
+  width: 100%;
+  min-height: 600px;
+  border-bottom: 2px solid #3a2f2f;
+  transition: all 0.3s ease;
+  display: block;
+}
+
+.treasure-chest {
+  width: 16px;
+  height: 16px;
+  background: #ffd700;
+  position: absolute;
+  image-rendering: pixelated;
+}
+
+.slime {
+  width: 8px;
+  height: 8px;
+  background: #00f;
+  position: absolute;
+  image-rendering: pixelated;
+}
+
+.floor-stairs {
+  width: 32px;
+  height: 48px;
+  background: #4a1c1c;
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+}
+
+.room {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.5s ease;
+}
+
+.room-exit {
+  position: absolute;
+  width: 40px;
+  height: 60px;
+  background: #2a1f1f;
+  border: 2px solid #3a2f2f;
+}
+
+.room-exit.north { top: 0; left: 50%; transform: translateX(-50%); }
+.room-exit.south { bottom: 0; left: 50%; transform: translateX(-50%); }
+.room-exit.east { right: 0; top: 50%; transform: translateY(-50%); }
+.room-exit.west { left: 0; top: 50%; transform: translateY(-50%); }
+
+.info-panel {
+  width: 800px;
+  background: #2a1f1f;
+  padding: 15px;
+  border-radius: 8px 8px 0 0;
+  margin-top: auto;
+}
+
+.info-panel {
+  flex: 1;
+  max-width: 400px;
+  background: #2a1f1f;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.combat-log {
+  height: 300px;
+  overflow-y: auto;
+  background: #1a0f0f;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+#fight-button {
+  position: absolute;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ff3333;
+  padding: 10px 30px;
+  display: none;
+}
+
+.monster-sprite {
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  transition: all 0.3s ease;
+}
+
+.monster-stats {
+  background: #1a0f0f;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.player {
+  width: 32px;
+  height: 32px;
+  background: #ff6b6b;
+  position: absolute;
+  image-rendering: pixelated;
+  box-shadow: inset -4px -4px 0 #8b3232;
+}
+
+.monster {
+  background: #3a1c1c;
+  width: 32px;
+  height: 32px;
+  margin: 4px;
+  image-rendering: pixelated;
+  box-shadow: inset -4px -4px 0 #1a0f0f;
+  position: absolute;
+}
+
+.monster:not(.monster-dead):hover {
+  transform: scale(1.02);
+  background: #4a2c2c;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+}
+
+.monster-dead {
+  opacity: 0.5;
+  filter: grayscale(100%);
+}
+
+.monster h3 {
+  color: #ffd700;
+  margin: 0 0 10px 0;
+}
+
+.monster-description {
+  font-size: 0.9em;
+  color: #aaa;
+  margin-bottom: 10px;
+}
+
+.health-bar {
+  width: 100%;
+  height: 10px;
+  background: #641e1e;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 5px 0;
+}
+
+.health-fill {
+  height: 100%;
+  background: #4CAF50;
+  transition: width 0.3s ease;
+}
+
+.door {
+  position: absolute;
+  width: 32px;
+  height: 4px;
+  background: white;
+  image-rendering: pixelated;
+}
+
+.door.north {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.door.south {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#game-over {
+  text-align: center;
+  padding: 50px;
+}
+
+#game-over h1 {
+  color: #ff3333;
+  font-size: 48px;
+  margin-bottom: 30px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+#game-over button {
+  font-size: 24px;
+  padding: 15px 40px;
+  background: #4a1c1c;
+  margin-top: 20px;
+}
+
+#game-over button:hover {
+  background: #6e2929;
+}
 // Moving the contents of java/styles.css to static/styles.css
 // All code from java/styles.css goes here
