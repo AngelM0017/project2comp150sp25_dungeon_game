@@ -9,6 +9,31 @@ let playerPosition = { x: 400, y: 300 };
 let currentRoom = { x: 0, y: 0 };
 const rooms = new Map();
 const moveSpeed = 5;
+
+function selectCharacter(choice) {
+    const characterMap = {
+        1: 'Swordsman',
+        2: 'Mage',
+        3: 'FrostRevenant',
+        4: 'CelestialMonk'
+    };
+
+    selectedCharacter = characterMap[choice];
+    
+    // Remove selected class from all buttons
+    const buttons = document.querySelectorAll('.character-options button');
+    buttons.forEach(btn => btn.classList.remove('selected'));
+    
+    // Add selected class to clicked button
+    const selectedBtn = document.querySelector(`.character-options button:nth-child(${choice})`);
+    if (selectedBtn) {
+        selectedBtn.classList.add('selected');
+    }
+    
+    // Show name input
+    document.getElementById('character-name-input').style.display = 'block';
+}
+
 const keys = {
     w: false,
     a: false,
