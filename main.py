@@ -389,3 +389,16 @@ def calculate_ability_damage(base_damage, character_level):
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
+
+def place_random_door(room_element):
+    # List of possible door positions
+    positions = ['north', 'south', 'east', 'west']
+    # Choose a random position
+    random_position = random.choice(positions)
+
+    # Create door element
+    door = document.createElement('div')
+    door.className = f'door {random_position}'
+
+    # Add door to room
+    room_element.appendChild(door)
