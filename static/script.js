@@ -120,7 +120,16 @@ let defeatedMonstersInFloor = 0;
 
 // Define selectCharacter function globally
 function selectCharacter(choice) {
-    selectedCharacter = choice.toString();
+    const characterMap = {
+        1: 'Swordsman',
+        2: 'Mage',
+        3: 'FrostRevenant',
+        4: 'CelestialMonk'
+    };
+
+    selectedCharacterType = characterMap[choice];
+    selectedCharacter = choice;
+
     const buttons = document.querySelectorAll('.character-options button');
     buttons.forEach(btn => btn.classList.remove('selected'));
 
@@ -635,26 +644,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 // Make selectCharacter available globally
-    window.selectCharacter = function(choice) {
-        const characterMap = {
-            1: 'Swordsman',
-            2: 'Mage',
-            3: 'FrostRevenant',
-            4: 'CelestialMonk'
-        };
-
-        selectedCharacter = characterMap[choice];
-
-        const buttons = document.querySelectorAll('.character-options button');
-        buttons.forEach(btn => btn.classList.remove('selected'));
-
-        const selectedBtn = document.querySelector(`.character-options button:nth-child(${choice})`);
-        if (selectedBtn) {
-            selectedBtn.classList.add('selected');
-        }
-
-        document.getElementById('character-name-input').style.display = 'block';
-    };
+    window.selectCharacter = selectCharacter;
 
 
 
@@ -771,12 +761,12 @@ function checkProximityInteractions() {
                 fightButton.className = 'action-button fight-button';
                 fightButton.textContent = 'Fight';
                 fightButton.onclick = () => startBattleMode(index);
-                
+
                 const runButton = document.createElement('button');
                 runButton.className = 'action-button run-button';
                 runButton.textContent = 'Run';
                 runButton.onclick = () => handleRunAway();
-                
+
                 contextButtons.innerHTML = '';
                 contextButtons.appendChild(fightButton);
                 contextButtons.appendChild(runButton);
@@ -802,7 +792,7 @@ function checkProximityInteractions() {
                     chest.classList.add('looted');
                     contextButtons.innerHTML = '';
                 };
-                
+
                 contextButtons.innerHTML = '';
                 contextButtons.appendChild(lootButton);
             }
@@ -895,8 +885,7 @@ function enterCombatMode() {
     // Set combat message
     contextMessage.textContent = 'Choose your attack:';
 
-    // Generate ability buttons
-    const characterMoves = movesets[selectedCharacterType.type];
+    // Generate ability buttons    const characterMoves = movesets[selectedCharacterType.type];
     for (const moveName in characterMoves) {
         const move = characterMoves[moveName];
 
@@ -1781,7 +1770,7 @@ function handlePostCombatEvent() {
             addToCombatLog(`Floor ${currentFloor} cleared! Advance to find the stairs to the next floor.`);
             showFloorStairs();
         } else {
-            addToCombatLog("Congratulations! You have defeated the Lord of the Tomb and completed the game!");
+            addToCombatLog("Congratulations! You have defeated the Lordof the Tomb and completed the game!");
             // Show victory screen
             const gameScreen = document.getElementById('game-screen');
             gameScreen.innerHTML = `
