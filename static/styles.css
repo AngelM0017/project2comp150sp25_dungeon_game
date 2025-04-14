@@ -166,11 +166,9 @@ button:disabled {
   background: #1a0f0f;
   image-rendering: pixelated;
   position: relative;
-  height: calc(100vh - 180px);
+  width: 85%;
+  height: 100vh;
   border: 4px solid #2a1f1f;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
   padding: 20px;
   overflow: hidden;
 }
@@ -178,31 +176,81 @@ button:disabled {
 /* Prompt Screen Container */
 .prompt-screen {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 180px;
-  background-color: rgba(20, 20, 30, 0.95);
-  border-top: 2px solid #6a5acd;
-  color: #fff;
-  font-family: 'Arial', sans-serif;
+  right: 0;
+  top: 0;
+  width: 15%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 20px;
+  z-index: 1000;
   display: flex;
-  z-index: 100;
-  transition: height 0.3s ease;
-  align-items: stretch;
-  justify-content: space-between;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  flex-direction: column;
+  border-left: 2px solid #6a5acd;
+  overflow-y: auto;
 }
 
 /* Left Section - Player Stats */
 .player-status {
-  width: 25%;
+  background: rgba(42, 31, 31, 0.8);
   padding: 15px;
-  border-right: 1px solid #6a5acd;
-  overflow-y: auto;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #6a5acd;
+}
+
+.player-stats {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 5px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.stat-label {
+  color: #ffd700;
+}
+
+.game-log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+  background: rgba(26, 15, 15, 0.8);
+  border-radius: 8px;
+  margin-top: 10px;
+  border: 1px solid #6a5acd;
+}
+
+.log-entry {
+  margin: 5px 0;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 13px;
+  border-left: 3px solid transparent;
+}
+
+.log-entry.movement {
+  border-left-color: #4CAF50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.log-entry.combat {
+  border-left-color: #f44336;
+  background: rgba(244, 67, 54, 0.1);
+}
+
+.log-entry.loot {
+  border-left-color: #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+}
+
+.log-entry.status {
+  border-left-color: #2196F3;
+  background: rgba(33, 150, 243, 0.1);
 }
 
 .player-status h3 {
@@ -234,12 +282,12 @@ button:disabled {
 
 /* Middle Section - Action Area */
 .action-area {
-  width: 50%;
+  width: 100%;
   padding: 15px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: center;
 }
 
 .context-message {
@@ -251,20 +299,17 @@ button:disabled {
 }
 
 .context-buttons {
-  height: 70%;
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
 }
 
 /* Right Section - Combat/Monster Info */
 .monster-info {
-  width: 25%;
+  width: 100%;
   padding: 15px;
-  border-left: 1px solid #6a5acd;
-  overflow-y: auto;
+  border-top: 1px solid #6a5acd;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -293,32 +338,22 @@ button:disabled {
 
 /* Button Styles */
 .action-button {
-  padding: 8px 15px;
+  padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: #6a5acd;
-  color: white;
-  font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s;
-}
-
-.action-button:hover {
-  background-color: #8a7aed;
-  transform: translateY(-2px);
-}
-
-.action-button:active {
-  transform: translateY(1px);
+  font-weight: bold;
+  transition: all 0.3s ease;
 }
 
 .fight-button {
-  background-color: #d32f2f;
+  background-color: #ff3e3e;
+  color: white;
 }
 
 .loot-button {
-  background-color: #ffc107;
-  color: #333;
+  background-color: #ffd700;
+  color: black;
 }
 
 .ability-button {
@@ -345,9 +380,9 @@ button:disabled {
 
 /* Animations */
 @keyframes pulse {
-  0% { opacity: 0.7; }
-  50% { opacity: 1; }
-  100% { opacity: 0.7; }
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.7; }
 }
 
 .urgent-action {
@@ -357,36 +392,43 @@ button:disabled {
 .room {
   position: relative;
   width: 100%;
-  min-height: 600px;
-  border-bottom: 2px solid rgba(58, 47, 47, 0.5);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  background: linear-gradient(180deg, rgba(26,15,15,0.9) 0%, rgba(42,31,31,0.9) 100%);
-  display: block;
+  height: 100%;
+  background: linear-gradient(135deg, #1a0f0f 0%, #2a1f1f 100%);
+  transition: opacity 0.5s ease;
+  overflow: hidden;
 }
 
 .treasure-chest {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
   background: linear-gradient(145deg, #ffd700, #ffed4a);
   border-radius: 4px;
   box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-  animation: float 3s ease-in-out infinite;
   position: absolute;
-  image-rendering: pixelated;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.3s ease;
 }
 
-@keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+.treasure-chest.nearby {
+  animation: chestGlow 1.5s infinite;
+  transform: scale(1.1);
 }
 
 .slime {
-  width: 8px;
-  height: 8px;
-  background: #00f;
+  width: 16px;
+  height: 16px;
+  background: linear-gradient(135deg, #00ff00, #008800);
+  border-radius: 50%;
   position: absolute;
-  image-rendering: pixelated;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  animation: slimePulse 2s infinite;
+  z-index: 5;
+}
+
+.slime.nearby {
+  animation: slimeAttack 0.5s;
+  background: linear-gradient(135deg, #ff0000, #880000);
 }
 
 .floor-stairs {
@@ -398,13 +440,6 @@ button:disabled {
   top: 50%;
   transform: translateY(-50%);
   display: none;
-}
-
-.room {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  transition: opacity 0.5s ease;
 }
 
 .room-exit {
@@ -454,6 +489,27 @@ button:disabled {
   height: 32px;
   position: absolute;
   transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  border-radius: 50%;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+.monster-sprite.nearby {
+  animation: monsterGlow 1.5s infinite;
+  transform: scale(1.1);
+}
+
+.monster-sprite:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
 }
 
 .monster-stats {
@@ -465,23 +521,27 @@ button:disabled {
 
 .player {
   position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 60px;
+  width: 40px;
+  height: 40px;
   background: #ffd700;
   border-radius: 50%;
-  border: 3px solid #fff;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+  border: 2px solid #fff;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
   z-index: 10;
-  transition: all 0.3s ease;
+  transition: all 0.1s ease;
+  cursor: pointer;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+}
+
+.player.moving {
+  animation: none;
 }
 
 .monster {
   position: relative;
   width: 100%;
-  height: 150px;
+  height: 120px;
   background: rgba(42, 42, 42, 0.7);
   border-radius: 10px;
   border: 2px solid #6a5acd;
@@ -489,14 +549,15 @@ button:disabled {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   cursor: pointer;
   transform-origin: center;
+  z-index: 5;
 }
 
-.monster:not(.monster-dead):hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(106, 90, 205, 0.4);
+.monster:hover {
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(106, 90, 205, 0.4);
   border-color: #ffd700;
 }
 
@@ -576,40 +637,90 @@ button:disabled {
 }
 
 .door {
-    position: absolute;
-    width: 40px;
-    height: 60px;
-    background: linear-gradient(to bottom, #4a1c1c, #2a1f1f);
-    border: 2px solid #6e2929;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+  position: absolute;
+  width: 40px;
+  height: 60px;
+  background: linear-gradient(to bottom, #ffffff, #e0e0e0);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  opacity: 0.8;
+  cursor: pointer;
+  z-index: 10;
 }
 
-.door:hover {
-    background: linear-gradient(to bottom, #6e2929, #4a1c1c);
-    box-shadow: 0 0 15px rgba(110, 41, 41, 0.5);
+.door.north {
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-bottom: 4px solid #ffd700;
+  border-radius: 0 0 8px 8px;
+  margin-top: 10px;
+}
+
+.door.south {
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-top: 4px solid #ffd700;
+  border-radius: 8px 8px 0 0;
+  margin-bottom: 10px;
+}
+
+.door.east {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 4px solid #ffd700;
+  border-radius: 8px 0 0 8px;
+  height: 40px;
+  width: 60px;
+  margin-right: 10px;
+}
+
+.door.west {
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right: 4px solid #ffd700;
+  border-radius: 0 8px 8px 0;
+  height: 40px;
+  width: 60px;
+  margin-left: 10px;
+}
+
+.door-active {
+  opacity: 1;
+  border-color: #ffd700;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  animation: doorPulse 1s infinite;
+}
+
+@keyframes doorPulse {
+  0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); }
+  100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
 }
 
 .healing-shrine {
-    position: absolute;
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, #4CAF50, #2E7D32);
-    border-radius: 50%;
-    box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
-    cursor: pointer;
-    animation: pulse 2s infinite;
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+  cursor: pointer;
+  animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
-    0% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.4); }
-    50% { box-shadow: 0 0 30px rgba(76, 175, 80, 0.6); }
-    100% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.4); }
+  0% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.4); }
+  50% { box-shadow: 0 0 30px rgba(76, 175, 80, 0.6); }
+  100% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.4); }
 }
 
 .healing-shrine:hover {
-    transform: translate(-50%, -50%) scale(1.1);
+  transform: translate(-50%, -50%) scale(1.1);
 }
 
 #game-over {
@@ -712,4 +823,195 @@ button:disabled {
   0% { transform: translate(-50%, -50%) scale(1); }
   50% { transform: translate(-50%, -50%) scale(1.1); }
   100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Add click feedback animation */
+.clickable {
+  position: relative;
+  overflow: hidden;
+}
+
+.clickable::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.clickable:active::after {
+  animation: clickRipple 0.4s ease-out;
+}
+
+@keyframes clickRipple {
+  0% {
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 1;
+  }
+  100% {
+      transform: translate(-50%, -50%) scale(20);
+      opacity: 0;
+  }
+}
+
+@keyframes slimePulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.2); opacity: 0.9; }
+  100% { transform: scale(1); opacity: 0.7; }
+}
+
+.monster-tooltip, .chest-tooltip {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  border: 2px solid #6a5acd;
+  box-shadow: 0 0 15px rgba(106, 90, 205, 0.3);
+  z-index: 1000;
+  pointer-events: none;
+  max-width: 250px;
+  font-size: 14px;
+}
+
+.monster-tooltip h3, .chest-tooltip h3 {
+  color: #ffd700;
+  margin: 0 0 10px 0;
+  font-size: 16px;
+}
+
+.monster-tooltip .monster-stats {
+  margin: 10px 0;
+  padding: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.chest-tooltip ul {
+  margin: 5px 0;
+  padding-left: 20px;
+  color: #ffd700;
+}
+
+.chest-tooltip li {
+  margin: 3px 0;
+  color: white;
+}
+
+.reward-notification {
+  position: fixed;
+  background: rgba(255, 215, 0, 0.9);
+  color: black;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: bold;
+  animation: float-up 2s ease-out forwards;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+@keyframes float-up {
+  0% {
+      transform: translateY(0);
+      opacity: 1;
+  }
+  100% {
+      transform: translateY(-30px);
+      opacity: 0;
+  }
+}
+
+.treasure-chest.looted {
+  opacity: 0.3;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+
+@keyframes monsterGlow {
+  0% { box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.8); }
+  100% { box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+}
+
+@keyframes chestGlow {
+  0% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+  100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+}
+
+@keyframes slimeAttack {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.5); }
+  100% { transform: scale(1); }
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.attack-button {
+  background: linear-gradient(145deg, #ff3e3e, #ff0000);
+  color: white;
+  border: 1px solid #ff6b6b;
+}
+
+.attack-button:hover {
+  background: linear-gradient(145deg, #ff0000, #cc0000);
+  transform: translateY(-2px);
+}
+
+.run-button {
+  background: linear-gradient(145deg, #4a4a4a, #333333);
+  color: white;
+  border: 1px solid #666666;
+}
+
+.run-button:hover {
+  background: linear-gradient(145deg, #333333, #222222);
+  transform: translateY(-2px);
+}
+
+.loot-button {
+  background: linear-gradient(145deg, #ffd700, #ffed4a);
+  color: black;
+  border: 1px solid #ffe44d;
+}
+
+.loot-button:hover {
+  background: linear-gradient(145deg, #ffed4a, #ffc700);
+  transform: translateY(-2px);
+}
+
+.damage-notification {
+  position: absolute;
+  color: #ff3e3e;
+  font-weight: bold;
+  font-size: 16px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  animation: floatUp 1s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes floatUp {
+  0% {
+      transform: translateY(0);
+      opacity: 1;
+  }
+  100% {
+      transform: translateY(-30px);
+      opacity: 0;
+  }
 }
