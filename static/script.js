@@ -1539,7 +1539,7 @@ function createRoom(index, x, y) {
     const door = document.createElement('div');
     door.className = 'door';
     door.style.transform = `rotate(${doorAngle}deg)`;
-    
+
     // Position door on room edge based on angle
     const radius = 300; // Distance from center to edge
     const doorX = Math.cos(doorAngle * Math.PI / 180) * radius + 384;
@@ -1956,3 +1956,171 @@ if (fightButton) {
         }
     });
 }
+
+function updateCombatUI(data) {
+    const { player, monster, message, is_crit } = data;
+
+    // Update health bars with smooth animations
+    updateHealthBar('player-health', player.health, player.max_health);
+    updateHealthBar('monster-health', monster.health, monster.max_health);
+
+    // Update stats
+    document.getElementById('player-health').textContent = Math.ceil(player.health);
+    document.getElementById('monster-health').textContent = Math.ceil(monster.health);
+
+    // Add combat log message with appropriate styling
+    const logEntry = document.createElement('div');
+    logEntry.className = is_crit ? 'player-action critical' : 'player-action';
+    logEntry.textContent = message;
+
+    const combatLog = document.getElementById('combat-log');
+    combatLog.insertBefore(logEntry, combatLog.firstChild);
+
+    // Trim combat log if too long
+    while (combatLog.children.length > 50) {
+        combatLog.removeChild(combatLog.lastChild);
+    }
+
+    // Add hit animation
+    if (monster.health > 0) {
+        addHitAnimation(document.querySelector('.monster.active'), is_crit);
+    } else {
+        handleMonsterDefeat(monster);
+    }
+
+    // Check for game over
+    if (player.health <= 0) {
+        handleGameOver();
+    }
+}
+
+function updateHealthBar(elementId, current, max) {
+    const healthBar = document.getElementById(elementId + '-bar');
+    const percentage = (current / max) * 100;
+
+    healthBar.style.width = percentage + '%';
+    healthBar.style.backgroundColor = getHealthColor(percentage);
+}
+
+function getHealthColor(percentage) {
+    if (percentage > 50) {
+        return `hsl(${120 * (percentage / 100)}, 70%, 45%)`;
+    } else {
+        return `hsl(${120 * (percentage / 100)}, 70%, 45%)`;
+    }
+}
+
+function addHitAnimation(element, isCritical) {
+    element.classList.add('hit');
+    if (isCritical) {
+        element.classList.add('critical-hit');
+
+        const critText = document.createElement('div');
+        critText.className = 'crit-text';
+        critText.textContent = 'CRITICAL!';
+        element.appendChild(critText);
+
+        setTimeout(() => {
+            element.removeChild(critText);
+        }, 1000);
+    }
+
+    setTimeout(() => {
+        element.classList.remove('hit', 'critical-hit');
+    }, 300);
+}
+
+function handleMonsterDefeat(monster) {
+    const monsterElement = document.querySelector('.monster.active');
+    monsterElement.classList.add('monster-dead');
+
+    const defeatText = document.createElement('div');
+    defeatText.className = 'defeat-text';
+    defeatText.textContent = 'Defeated!';
+    monsterElement.appendChild(defeatText);
+
+    setTimeout(() => {
+        monsterElement.classList.add('fade-out');
+        setTimeout(() => {
+            if (monsterElement.parentNode) {
+                monsterElement.parentNode.removeChild(monsterElement);
+            }
+        }, 1000);
+    }, 1500);
+}
+
+function handleGameOver() {
+    const gameOverScreen = document.getElementById('game-over');
+    gameOverScreen.style.display = 'flex';
+    gameOverScreen.classList.add('fade-in');
+
+    // Disable combat controls
+    const actionArea = document.querySelector('.action-area');
+    actionArea.style.pointerEvents = 'none';
+}
+
+// Add these CSS classes to style.css
+const newStyles = `
+.hit {
+    animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.critical-hit {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+}
+
+.crit-text {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ffd700;
+    font-size: 24px;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    animation: float-up 1s ease-out forwards;
+}
+
+.defeat-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ff3e3e;
+    font-size: 32px;
+    font-weight: bold;
+    text-shadow: 0 0 15px rgba(255, 62, 62, 0.6);
+    animation: pulse 1s ease-in-out infinite;
+}
+
+.fade-out {
+    animation: fadeOut 1s ease-out forwards;
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in forwards;
+}
+
+@keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+@keyframes float-up {
+    0% { transform: translate(-50%, 0); opacity: 1; }
+    100% { transform: translate(-50%, -50px); opacity: 0; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+`;

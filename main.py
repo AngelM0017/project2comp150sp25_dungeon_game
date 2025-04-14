@@ -252,20 +252,28 @@ def random_event(player):
 # Corrected getMonster function
 # Corrected getMonster function
 def getMonster(area):
-    monster_ranges = []
-    for i in range(len(area.spawn_rate)):
-        if i == 0:
-            monster_ranges.append(area.spawn_rate[i])
-        else:
-            monster_ranges.append(area.spawn_rate[i] + monster_ranges[i - 1])
+    """Get a random monster from the area's monster pool with balanced stats."""
+    monster_type = random.choice(list(area.monster_pools.keys()))
+    monster_stats = area.monster_pools[monster_type]
 
-    dice_roll = random.randint(0, 100)
-    for i in range(len(monster_ranges)):
-        if monster_ranges[i] > dice_roll:
-            # Get the monster class from the spawn pool
-            monster_class = area.spawn_pool[i]
-            return monster_class  # Return the class itself (e.g., Goblin, Kobalt)
+    # Add randomness to monster stats within a reasonable range
+    health_variance = random.uniform(0.8, 1.2)
+    attack_variance = random.uniform(0.9, 1.1)
+    defense_variance = random.uniform(0.9, 1.1)
 
+    health = int(monster_stats['health'] * health_variance)
+    attack = int(monster_stats['attack'] * attack_variance)
+    defense = int(monster_stats['defense'] * defense_variance)
+
+    return {
+        'type': monster_type,
+        'name': f"{monster_type} {random.choice(['Warrior', 'Hunter', 'Brute', 'Scout'])}",
+        'health': health,
+        'max_health': health,
+        'attack': attack,
+        'defense': defense,
+        'description': monster_stats.get('description', f"A fearsome {monster_type} ready for battle!")
+    }
 
 
 def end_game():
@@ -334,49 +342,68 @@ def start_game_route():
 
 @app.route('/attack', methods=['POST'])
 def attack():
-    """Handle attack requests from the frontend."""
-    try:
-        data = request.get_json()
-        target_idx = data.get('target_idx')
-        player_stats = data.get('player')
-        monster = data.get('monster')
+    """Handle attack actions with improved combat mechanics."""
+    data = request.get_json()
+    player = data.get('player')
+    monster = data.get('monster')
+    ability = data.get('ability', 'basic_attack')
 
-        if not all([target_idx is not None, player_stats, monster]):
-            return jsonify({'error': 'Missing required data'}), 400
+    if not player or not monster:
+        return jsonify({'error': 'Invalid request data'}), 400
 
-        # Calculate damage
-        player_damage = random.randint(1, player_stats['attack'])
-        monster_damage = random.randint(1, monster['attack'])
+    # Calculate damage with variance and critical hits
+    base_damage = calculate_ability_damage(player['attack'], ability)
+    crit_chance = 0.15  # 15% chance for critical hit
+    is_crit = random.random() < crit_chance
 
-        # Apply defense reduction
-        player_damage = max(1, player_damage - (monster.get('defense', 0) // 2))
-        monster_damage = max(1, monster_damage - (player_stats.get('defense', 0) // 2))
+    if is_crit:
+        damage = base_damage * 1.5
+        message = f"Critical hit! {player['name']} deals {damage:.1f} damage!"
+    else:
+        damage = base_damage
+        message = f"{player['name']} attacks for {damage:.1f} damage!"
 
-        # Update health
-        monster['health'] = max(0, monster['health'] - player_damage)
-        new_player_health = max(0, player_stats['health'] - monster_damage)
+    # Apply defense reduction
+    damage = max(1, damage - (monster['defense'] * 0.5))
+    monster['health'] -= damage
 
-        # Check if monster is defeated
-        monster_defeated = monster['health'] <= 0
-        player_defeated = new_player_health <= 0
+    # Monster counterattack if still alive
+    counter_message = ""
+    if monster['health'] > 0:
+        counter_damage = calculate_monster_damage(monster['attack'])
+        player['health'] -= counter_damage
+        counter_message = f"\n{monster['name']} counterattacks for {counter_damage:.1f} damage!"
 
-        return jsonify({
-            'success': True,
-            'playerDamage': player_damage,
-            'monsterDamage': monster_damage,
-            'newPlayerHealth': new_player_health,
-            'newMonsterHealth': monster['health'],
-            'monsterDefeated': monster_defeated,
-            'playerDefeated': player_defeated,
-            'message': f"You deal {player_damage} damage! Monster deals {monster_damage} damage!"
-        })
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    # Update game state
+    monster['health'] = max(0, monster['health'])
+    player['health'] = max(0, player['health'])
+
+    return jsonify({
+        'player': player,
+        'monster': monster,
+        'message': message + counter_message,
+        'is_crit': is_crit
+    })
 
 
 # Consider adding a balance system
-def calculate_ability_damage(base_damage, character_level):
-    return base_damage * (1 + 0.1 * character_level)
+def calculate_ability_damage(base_attack, ability_type='basic_attack'):
+    """Calculate damage for different ability types."""
+    damage_multipliers = {
+        'basic_attack': 1.0,
+        'heavy_strike': 1.4,
+        'quick_slash': 0.8,
+        'power_blow': 1.6
+    }
+
+    multiplier = damage_multipliers.get(ability_type, 1.0)
+    variance = random.uniform(0.9, 1.1)
+    return base_attack * multiplier * variance
+
+def calculate_monster_damage(base_attack):
+    """Calculate monster damage with variance."""
+    variance = random.uniform(0.8, 1.2)
+    return base_attack * variance
 
 
 # # Cache frequently accessed elements
