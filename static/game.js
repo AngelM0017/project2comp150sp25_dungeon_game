@@ -34,16 +34,16 @@ document.addEventListener('keyup', (e) => {
 // Add movement update function
 function updateMovement() {
     if (!selectedCharacterType) return;
-    
+
     if (keys.w) playerPosition.y -= moveSpeed;
     if (keys.s) playerPosition.y += moveSpeed;
     if (keys.a) playerPosition.x -= moveSpeed;
     if (keys.d) playerPosition.x += moveSpeed;
-    
+
     // Keep player within bounds
     playerPosition.x = Math.max(32, Math.min(736, playerPosition.x));
     playerPosition.y = Math.max(32, Math.min(436, playerPosition.y));
-    
+
     updatePlayerPosition();
 }
 
@@ -99,13 +99,13 @@ function selectCharacter(choice) {
     selectedCharacter = choice.toString();
     const buttons = document.querySelectorAll('.character-options button');
     buttons.forEach(btn => btn.classList.remove('selected'));
-    
+
     // Add selected class to clicked button
     const selectedBtn = document.querySelector(`.character-options button:nth-child(${choice})`);
     if (selectedBtn) {
         selectedBtn.classList.add('selected');
     }
-    
+
     document.getElementById('character-name-input').style.display = 'block';
 }
 
@@ -552,6 +552,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Create prompt screen if it doesn't exist
     createPromptScreen();
+    addButtonClickability();
+    addButtonStyles();
 });
 
 // Initialize the prompt screen
@@ -1002,12 +1004,7 @@ function createTreasureChest(room) {
     chest.style.transform = 'translate(-50%, -50%)';
     room.appendChild(chest);
 
-    chest.addEventListener('mouseover', () => {
-        const distance = getDistanceToPlayer(chest);
-        if (distance < 32) {
-            showLootButton();
-        }
-    });
+    chest.addEventListener('click', () => handleChestClick(chest));
 }
 
 // Create slime trap
@@ -1479,21 +1476,7 @@ function displayMonsters(monsters) {
         sprite.style.backgroundColor = getMonsterColor(monster.name);
 
         // Make monsters clickable for attack
-        sprite.addEventListener('click', () => {
-            if (inBattleMode) {
-                attack(i + 1);
-            } else {
-                const dx = playerPosition.x - position.x;
-                const dy = playerPosition.y - position.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < 32) {
-                    startBattleMode(i);
-                } else {
-                    addToCombatLog("You're too far away to attack. Move closer!");
-                }
-            }
-        });
+        sprite.addEventListener('click', () => handleMonsterClick(monster, i));
 
         const position = {
             x: Math.random() * 568,
@@ -1733,7 +1716,7 @@ function getMonsterPoolForFloor(floor) {
         ],
         3: [
             { name: 'Zombie', type: 'undead', health: 60, maxHealth: 60, attack: 12, defense: 4, description: 'A shambling zombie' },
-            { name: 'Dark Elf', type: 'humanoid', health: 50, maxHealth: 50, attack: 15, defense: 3, description: 'A cunning dark elf' }
+            { name: 'Dark Elf', type: 'humanoid', health: 50, maxHealth: 50, attack:15, defense: 3, description: 'A cunning dark elf' }
         ],
         4: [
             { name: 'Golem', type: 'construct', health: 80, maxHealth: 80, attack: 15, defense: 6, description: 'A stone golem' },
@@ -1867,4 +1850,66 @@ function selectCharacter(characterType) {
         throw new Error("Invalid character type");
     }
     // ... rest of selection logic
+}
+
+// Create popup for displaying object info
+function createInfoPopup(title, content) {
+    const popup = document.createElement('div');
+    popup.className = 'info-popup';
+    popup.innerHTML = `
+        <div class="popup-content">
+            <h3>${title}</h3>
+            <div>${content}</div>
+            <button onclick="this.parentElement.parentElement.remove()">Close</button>
+        </div>
+    `;
+    document.body.appendChild(popup);
+}
+
+// Handle treasure chest click
+function handleChestClick(chest) {
+    const distance = getDistanceToPlayer(chest);
+    if (distance < 32) {
+        const rewards = [
+            "Health Potion (20% HP restore)",
+            "Attack Boost (2% increase)",
+            "Defense Boost (+5)",
+            "Special Item (varies by class)"
+        ];
+        const content = `
+            <p>A mysterious chest! It might contain:</p>
+            <ul>${rewards.map(r => `<li>${r}</li>`).join('')}</ul>
+            <button onclick="lootChest(); this.parentElement.parentElement.remove()">Open Chest</button>
+        `;
+        createInfoPopup('Treasure Chest', content);
+    } else {
+        addToCombatLog("Move closer to interact with the chest!");
+    }
+}
+
+// Handle monster click
+function handleMonsterClick(monster, index) {
+    const content = `
+        <div class="monster-stats">
+            <p>Health: ${monster.health}/${monster.maxHealth}</p>
+            <p>Attack: ${monster.attack}</p>
+            <p>Defense: ${monster.defense}</p>
+            <p>${monster.description || ''}</p>
+        </div>
+        ${getDistanceToPlayer(monsterSprites[index].element) < 32 ? 
+            `<button onclick="startBattleMode(${index}); this.parentElement.parentElement.remove()">Fight!</button>` : 
+            '<p>Move closer to engage in combat!</p>'}
+    `;
+    createInfoPopup(monster.name, content);
+}
+
+// Add event listener for the fight button
+const fightButton = document.getElementById('fight-button');
+if (fightButton) {
+    fightButton.addEventListener('click', () => {
+        const nearbyMonster = findNearbyMonster();
+        if (nearbyMonster !== null) {
+            startBattleMode(nearbyMonster);
+        }
+    });
 }
