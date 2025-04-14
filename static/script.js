@@ -10,7 +10,7 @@ let currentRoom = { x: 0, y: 0 };
 const rooms = new Map();
 const moveSpeed = 5;
 
-function selectCharacter(choice) {
+window.selectCharacter = function(choice) {
     const characterMap = {
         1: 'Swordsman',
         2: 'Mage',
@@ -18,7 +18,8 @@ function selectCharacter(choice) {
         4: 'CelestialMonk'
     };
 
-    selectedCharacter = characterMap[choice];
+    selectedCharacter = choice;
+    selectedCharacterType = characterMap[choice];
     
     // Remove selected class from all buttons
     const buttons = document.querySelectorAll('.character-options button');
