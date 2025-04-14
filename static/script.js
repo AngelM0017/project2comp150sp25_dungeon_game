@@ -755,16 +755,32 @@ function showPromptScreen() {
 // Check for nearby interactive elements
 function checkProximityInteractions() {
     const player = document.querySelector('.player');
-    const playerRect = player.getBoundingClientRect();
+    if (!player) return;
+
+    const contextButtons = document.getElementById('context-buttons');
+    if (!contextButtons) return;
 
     // Check monsters
     document.querySelectorAll('.monster-sprite').forEach((monster, index) => {
-        const monsterRect = monster.getBoundingClientRect();
         const distance = getDistanceToPlayer(monster);
 
         if (distance < 32) {
             monster.classList.add('nearby');
-            updatePromptScreenForMonster(monster, index);
+            if (!contextButtons.querySelector('.fight-button')) {
+                const fightButton = document.createElement('button');
+                fightButton.className = 'action-button fight-button';
+                fightButton.textContent = 'Fight';
+                fightButton.onclick = () => startBattleMode(index);
+                
+                const runButton = document.createElement('button');
+                runButton.className = 'action-button run-button';
+                runButton.textContent = 'Run';
+                runButton.onclick = () => handleRunAway();
+                
+                contextButtons.innerHTML = '';
+                contextButtons.appendChild(fightButton);
+                contextButtons.appendChild(runButton);
+            }
         } else {
             monster.classList.remove('nearby');
         }
@@ -774,13 +790,27 @@ function checkProximityInteractions() {
     document.querySelectorAll('.treasure-chest').forEach(chest => {
         const distance = getDistanceToPlayer(chest);
 
-        if (distance < 32) {
+        if (distance < 32 && !chest.classList.contains('looted')) {
             chest.classList.add('nearby');
-            updatePromptScreenForChest(chest);
+            if (!contextButtons.querySelector('.loot-button')) {
+                const lootButton = document.createElement('button');
+                lootButton.className = 'action-button loot-button';
+                lootButton.textContent = 'Loot Chest';
+                lootButton.onclick = () => {
+                    lootChest();
+                    chest.classList.remove('nearby');
+                    chest.classList.add('looted');
+                    contextButtons.innerHTML = '';
+                };
+                
+                contextButtons.innerHTML = '';
+                contextButtons.appendChild(lootButton);
+            }
         } else {
             chest.classList.remove('nearby');
         }
     });
+}
 
     // Check slimes
     document.querySelectorAll('.slime').forEach(slime => {
@@ -1054,13 +1084,12 @@ function createRoom(x = 0, y = 0) {
     room.dataset.x = x;
     room.dataset.y = y;
 
-    // Add doors in all four corners
+    // Add single random door
     const directions = ['north', 'south', 'east', 'west'];
-    directions.forEach(direction => {
-        const door = document.createElement('div');
-        door.className = `door ${direction}`;
-        room.appendChild(door);
-    });
+    const randomDirection = directions[Math.floor(Math.random() * directions.length)];
+    const door = document.createElement('div');
+    door.className = `door ${randomDirection}`;
+    room.appendChild(door);
 
     // Generate room content
     const roomType = Math.random();

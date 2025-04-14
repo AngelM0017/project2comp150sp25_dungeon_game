@@ -505,6 +505,7 @@ button:disabled {
 .monster-sprite.nearby {
   animation: monsterGlow 1.5s infinite;
   transform: scale(1.1);
+  filter: brightness(1.2);
 }
 
 .monster-sprite:hover {
@@ -941,9 +942,9 @@ button:disabled {
 }
 
 @keyframes chestGlow {
-  0% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
-  50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
-  100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+  0% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+  50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.8); }
+  100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
 }
 
 @keyframes slimeAttack {
@@ -1014,4 +1015,47 @@ button:disabled {
       transform: translateY(-30px);
       opacity: 0;
   }
+}
+.monster-sprite {
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.3s ease;
+}
+
+.monster-sprite.nearby {
+  animation: monsterGlow 1.5s infinite;
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+@keyframes monsterGlow {
+  0% { box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.8); }
+  100% { box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+}
+
+.treasure-chest {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(145deg, #ffd700, #ffed4a);
+  border-radius: 4px;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+  position: absolute;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.3s ease;
+}
+
+.treasure-chest.nearby {
+  animation: chestGlow 1.5s infinite;
+  transform: scale(1.1);
+}
+
+@keyframes chestGlow {
+  0% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+  50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.8); }
+  100% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
 }
