@@ -520,23 +520,40 @@ animation: pulse 1.5s infinite;
 }
 
 .door {
-  position: absolute;
-  width: 32px;
-  height: 4px;
-  background: white;
-  image-rendering: pixelated;
+    position: absolute;
+    width: 40px;
+    height: 60px;
+    background: linear-gradient(to bottom, #4a1c1c, #2a1f1f);
+    border: 2px solid #6e2929;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.door.north {
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+.door:hover {
+    background: linear-gradient(to bottom, #6e2929, #4a1c1c);
+    box-shadow: 0 0 15px rgba(110, 41, 41, 0.5);
 }
 
-.door.south {
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+.healing-shrine {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #4CAF50, #2E7D32);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.4);
+    cursor: pointer;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.4); }
+    50% { box-shadow: 0 0 30px rgba(76, 175, 80, 0.6); }
+    100% { box-shadow: 0 0 20px rgba(76, 175, 80, 0.4); }
+}
+
+.healing-shrine:hover {
+    transform: translate(-50%, -50%) scale(1.1);
 }
 
 #game-over {

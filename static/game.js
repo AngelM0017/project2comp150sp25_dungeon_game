@@ -1534,20 +1534,63 @@ function createRoom(index, x, y) {
     room.dataset.x = x || 0;
     room.dataset.y = y || 0;
 
-    // Choose room type
+    // Generate random door position (0-359 degrees)
+    const doorAngle = Math.floor(Math.random() * 360);
+    const door = document.createElement('div');
+    door.className = 'door';
+    door.style.transform = `rotate(${doorAngle}deg)`;
+    
+    // Position door on room edge based on angle
+    const radius = 300; // Distance from center to edge
+    const doorX = Math.cos(doorAngle * Math.PI / 180) * radius + 384;
+    const doorY = Math.sin(doorAngle * Math.PI / 180) * radius + 234;
+    door.style.left = `${doorX}px`;
+    door.style.top = `${doorY}px`;
+    room.appendChild(door);
+
+    // Choose room type with different events
     const roomType = Math.random();
-    if (roomType < 0.6) { // 60% monster room
+    if (roomType < 0.4) { // 40% monster room
         room.dataset.type = ROOM_TYPES.MONSTER;
-        // We'll spawn monsters when player enters the room
-    } else if (roomType < 0.8) { // 20% treasure room
+        spawnMonstersInRoom(room);
+    } else if (roomType < 0.6) { // 20% treasure room
         room.dataset.type = ROOM_TYPES.TREASURE;
         createTreasureChest(room);
-    } else { // 20% trap room
+    } else if (roomType < 0.8) { // 20% trap room
         room.dataset.type = ROOM_TYPES.TRAP;
         createSlimeTrap(room);
+    } else { // 20% empty room with healing shrine
+        room.dataset.type = 'shrine';
+        createHealingShrine(room);
     }
 
     return room;
+}
+
+function createHealingShrine(room) {
+    const shrine = document.createElement('div');
+    shrine.className = 'healing-shrine';
+    shrine.style.left = '50%';
+    shrine.style.top = '50%';
+    shrine.style.transform = 'translate(-50%, -50%)';
+    shrine.addEventListener('click', () => {
+        if (getDistanceToPlayer(shrine) < 32) {
+            if (selectedCharacterType) {
+                const healAmount = Math.floor(selectedCharacterType.maxHealth * 0.3);
+                selectedCharacterType.health = Math.min(
+                    selectedCharacterType.health + healAmount,
+                    selectedCharacterType.maxHealth
+                );
+                addToCombatLog(`The shrine heals you for ${healAmount} HP!`);
+                updatePlayerStats(selectedCharacterType);
+                shrine.style.opacity = '0.5';
+                shrine.style.pointerEvents = 'none';
+            }
+        } else {
+            addToCombatLog("Move closer to use the healing shrine!");
+        }
+    });
+    room.appendChild(shrine);
 }
 
 // Fix loot function for treasure chests
