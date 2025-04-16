@@ -9,32 +9,6 @@ let playerPosition = { x: 400, y: 300 };
 let currentRoom = { x: 0, y: 0 };
 const rooms = new Map();
 const moveSpeed = 5;
-
-window.selectCharacter = function(choice) {
-    const characterMap = {
-        1: 'Swordsman',
-        2: 'Mage',
-        3: 'FrostRevenant',
-        4: 'CelestialMonk'
-    };
-
-    selectedCharacter = choice;
-    selectedCharacterType = characterMap[choice];
-    
-    // Remove selected class from all buttons
-    const buttons = document.querySelectorAll('.character-options button');
-    buttons.forEach(btn => btn.classList.remove('selected'));
-    
-    // Add selected class to clicked button
-    const selectedBtn = document.querySelector(`.character-options button:nth-child(${choice})`);
-    if (selectedBtn) {
-        selectedBtn.classList.add('selected');
-    }
-    
-    // Show name input
-    document.getElementById('character-name-input').style.display = 'block';
-}
-
 const keys = {
     w: false,
     a: false,
@@ -146,16 +120,7 @@ let defeatedMonstersInFloor = 0;
 
 // Define selectCharacter function globally
 function selectCharacter(choice) {
-    const characterMap = {
-        1: 'Swordsman',
-        2: 'Mage',
-        3: 'FrostRevenant',
-        4: 'CelestialMonk'
-    };
-
-    selectedCharacterType = characterMap[choice];
-    selectedCharacter = choice;
-
+    selectedCharacter = choice.toString();
     const buttons = document.querySelectorAll('.character-options button');
     buttons.forEach(btn => btn.classList.remove('selected'));
 
@@ -338,339 +303,75 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Modified createPromptScreen function to ensure button clickability
     function createPromptScreen() {
-      const gameScreen = document.getElementById('game-screen');
-      if (!gameScreen) return;
-
-      // Check if prompt screen already exists
-      let promptScreen = document.getElementById('prompt-screen');
-      if (!promptScreen) {
-        const promptScreenDiv = document.createElement('div');
-        promptScreenDiv.id = 'prompt-screen';
-        promptScreenDiv.innerHTML = `
-          <h2 id="player-name"></h2>
-          <div id="health-container">
-            <div class="status-label">Health:</div>
-            <div class="status-bar">
-              <div id="health-bar" class="bar-fill"></div>
-            </div>
-            <div class="status-text"><span id="player-health">100</span>/<span id="player-max-health">100</span></div>
-          </div>
-          <div id="mana-container">
-            <div class="status-label">Mana:</div>
-            <div class="status-bar">
-              <div id="mana-bar" class="bar-fill blue"></div>
-            </div>
-            <div class="status-text"><span id="player-mana">50</span>/<span id="player-max-mana">50</span></div>
-          </div>
-          <div class="stats-row">
-            <div class="stat-item">Attack: <span id="player-attack">0</span></div>
-            <div class="stat-item">Defense: <span id="player-defense">0</span></div>
-          </div>
-          <div class="stats-row">
-            <div class="stat-item">Gold: <span id="player-gold">0</span></div>
-          </div>
-          <div class="floor-info">Floor: <span id="current-floor">1</span></div>
-          <div id="monster-info" style="display: none;">
-            <h3 id="monster-name"></h3>
-            <div id="monster-health-container">
-              <div class="status-label">Monster Health:</div>
-              <div class="status-bar">
-                <div id="monster-health-bar" class="bar-fill red"></div>
-              </div>
-              <div class="status-text"><span id="monster-health">100</span>/<span id="monster-max-health">100</span></div>
-            </div>
-            <div class="stats-row">
-              <div class="stat-item">Attack: <span id="monster-attack">0</span></div>
-              <div class="stat-item">Defense: <span id="monster-defense">0</span></div>
-            </div>
-            <div id="monster-description" class="monster-desc"></div>
-          </div>
-          <div id="context-message" class="context-message">Explore the dungeon...</div>
-          <div id="context-buttons" class="context-buttons"></div>
-        `;
-        gameScreen.insertBefore(promptScreenDiv, gameScreen.firstChild);
-      }
+        // This functionality is now handled by GameHUD
+        return;
     }
 
     // Enhanced function to check proximity interactions with better button creation
     function checkProximityInteractions() {
-        const player = document.querySelector('.player');
-        if (!player) return;
-
-        const playerRect = player.getBoundingClientRect();
-
-        // Check monsters
-        document.querySelectorAll('.monster-sprite').forEach((monster, index) => {
-            const monsterRect = monster.getBoundingClientRect();
-            const distance = getDistanceToPlayer(monster);
-
-            if (distance < 32) {
-                monster.classList.add('nearby');
-                updatePromptScreenForMonster(monster, index);
-            } else {
-                monster.classList.remove('nearby');
-            }
-        });
-
-        // Check chests
-        document.querySelectorAll('.treasure-chest').forEach(chest => {
-            const distance = getDistanceToPlayer(chest);
-
-            if (distance < 32) {
-                chest.classList.add('nearby');
-                updatePromptScreenForChest(chest);
-            } else {
-                chest.classList.remove('nearby');
-            }
-        });
-
-        // Check slimes
-        document.querySelectorAll('.slime').forEach(slime => {
-            const distance = getDistanceToPlayer(slime);
-
-            if (distance < 32) {
-                slime.classList.add('nearby');
-                handleSlimeDamage();
-            } else {
-                slime.classList.remove('nearby');
-            }
-        });
+        // This functionality is now handled by InteractionManager
+        return;
     }
 
     // Update prompt screen for monster interaction
     function updatePromptScreenForMonster(monster, index) {
-        const actionArea = document.querySelector('.action-area');
-        if (!actionArea) return;
-
-        actionArea.innerHTML = `
-            <div class="monster-info">
-                <h3>${monster.dataset.name || 'Monster'}</h3>
-                <div class="monster-stats">
-                    <div>Health: ${monster.dataset.health}/${monster.dataset.maxHealth}</div>
-                    <div>Attack: ${monster.dataset.attack}</div>
-                </div>
-            </div>
-            <div class="action-buttons">
-                <button class="action-button attack-button" onclick="handleMonsterAttack(${index})">Attack</button>
-                <button class="action-button run-button" onclick="handleRunAway()">Run Away</button>
-            </div>
-        `;
+        // This functionality is now handled by InteractionManager
+        return;
     }
 
     // Update prompt screen for chest interaction
     function updatePromptScreenForChest(chest) {
-        const actionArea = document.querySelector('.action-area');
-        if (!actionArea) return;
-
-        if (!chest.classList.contains('looted')) {
-            actionArea.innerHTML = `
-                <div class="chest-info">
-                    <h3>Treasure Chest</h3>
-                    <p>A mysterious chest awaits...</p>
-                </div>
-                <div class="action-buttons">
-                    <button class="action-button loot-button" onclick="handleChestLoot(this)">Open Chest</button>
-                </div>
-            `;
-        }
-    }
-
-    // Handle monster attack
-    function handleMonsterAttack(monsterIndex) {
-        const monster = monsterSprites[monsterIndex];
-        if (!monster || !monster.element) return;
-
-        startBattleMode(monsterIndex);
-        addToGameLog(`Engaged in combat with ${monster.name}!`, 'combat');
-    }
-
-    // Handle running away
-    function handleRunAway() {
-        const player = document.querySelector('.player');
-        if (!player) return;
-
-        // Move player away from nearest monster
-        const nearestMonster = findNearestMonster();
-        if (nearestMonster) {
-            const monsterRect = nearestMonster.getBoundingClientRect();
-            const playerRect = player.getBoundingClientRect();
-
-            const dx = playerRect.left - monsterRect.left;
-            const dy = playerRect.top - monsterRect.top;
-            const angle = Math.atan2(dy, dx);
-
-            playerPosition.x += Math.cos(angle) * 100;
-            playerPosition.y += Math.sin(angle) * 100;
-            updatePlayerPosition();
-        }
-
-        addToGameLog('Ran away from combat!', 'movement');
-    }
-
-    // Handle slime trap damage
-    function handleSlimeDamage() {
-        if (!selectedCharacterType || selectedCharacterType.health <= 0) return;
-
-        const damage = 8;
-        selectedCharacterType.health = Math.max(0, selectedCharacterType.health - damage);
-
-        // Create damage notification
-        const player = document.querySelector('.player');
-        if (player) {
-            const notification = document.createElement('div');
-            notification.className = 'damage-notification';
-            notification.textContent = `-${damage}`;
-            notification.style.left = `${player.offsetLeft}px`;
-            notification.style.top = `${player.offsetTop}px`;
-            document.querySelector('.game-environment').appendChild(notification);
-
-            setTimeout(() => notification.remove(), 1000);
-        }
-
-        addToGameLog(`${selectedCharacterType.type} was damaged by toxic slime for ${damage} damage!`, 'combat');
-        updatePlayerStatusDisplay();
-
-        if (selectedCharacterType.health <= 0) {
-            handlePlayerDeath();
-        }
-    }
-
-    // Find nearest monster
-    function findNearestMonster() {
-        const monsters = document.querySelectorAll('.monster-sprite');
-        let nearestMonster = null;
-        let shortestDistance = Infinity;
-
-        monsters.forEach(monster => {
-            const distance = getDistanceToPlayer(monster);
-            if (distance < shortestDistance) {
-                shortestDistance = distance;
-                nearestMonster = monster;
-            }
-        });
-
-        return nearestMonster;
+        // This functionality is now handled by InteractionManager
+        return;
     }
 
     // Modified function to handle combat button creation
     function enterCombatMode() {
-      const promptScreen = document.getElementById('prompt-screen');
-      const contextButtons = document.getElementById('context-buttons');
-      const contextMessage = document.getElementById('context-message');
-      const monsterInfo = document.getElementById('monster-info');
-
-      if (!promptScreen || !contextButtons || !contextMessage || !monsterInfo) return;
-
-      promptScreen.classList.add('combat-mode');
-      monsterInfo.style.display = 'block';
-
-      // Find the active monster
-      const activeMonsterIndex = currentMonsters.findIndex(m => m.isAlive);
-      if (activeMonsterIndex === -1) return;
-
-      const monster = currentMonsters[activeMonsterIndex];
-
-      // Update monster info
-      document.getElementById('monster-name').textContent = monster.name;
-      document.getElementById('monster-health').textContent = monster.health;
-      document.getElementById('monster-max-health').textContent = monster.maxHealth;
-      document.getElementById('monster-health-bar').style.width = `${(monster.health / monster.maxHealth) * 100}%`;
-      document.getElementById('monster-attack').textContent = monster.attack;
-      document.getElementById('monster-defense').textContent = monster.defense;
-      document.getElementById('monster-description').textContent = monster.description || '';
-
-      // Set combat message
-      contextMessage.textContent = 'Choose your attack:';
-
-      // Generate ability buttons
-      const characterMoves = movesets[selectedCharacterType.type];
-      for (const moveName in characterMoves) {
-        const move = characterMoves[moveName];
-
-        const abilityBtn = document.createElement('button');
-        abilityBtn.className = 'action-button ability-button';
-        if (moveName === selectedMove) {
-          abilityBtn.classList.add('active');
-        }
-
-        // Show mana cost for abilities that use mana
-        const manaText = move.mana > 0 ? ` (${move.mana} MP)` : '';
-        abilityBtn.textContent = `${moveName}${manaText}`;
-        abilityBtn.setAttribute('data-move-name', moveName);
-
-        // Disable if not enough mana
-        if (move.mana > selectedCharacterType.mana) {
-          abilityBtn.disabled = true;
-          abilityBtn.style.opacity = '0.5';
-        }
-
-        contextButtons.appendChild(abilityBtn);
-      }
-
-      // Add attack button after selecting an ability
-      const attackBtn = document.createElement('button');
-      attackBtn.className = 'action-button fight-button';
-      attackBtn.style.width = '100%';
-      attackBtn.style.marginTop = '5px';
-      attackBtn.textContent = `Attack ${monster.name}`;
-      attackBtn.setAttribute('data-monster-index', activeMonsterIndex);
-      contextButtons.appendChild(attackBtn);
+        // This functionality is now handled by InteractionManager
+        return;
     }
 
-    // Modified setMove function for better button handling
-    function setMove(moveName) {
-      selectedMove = moveName;
-      document.querySelectorAll('.move-btn, .ability-button').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.textContent.includes(moveName)) {
-          btn.classList.add('active');
-        }
-      });
-
-      // Update description in combat mode
-      if (inBattleMode) {
-        const characterMoves = movesets[selectedCharacterType.type];
-        const move = characterMoves[moveName];
-        const damageRange = `${move.damage[0]}-${move.damage[1]}`;
-        const manaText = move.mana > 0 ? `Mana cost: ${move.mana}` : 'No mana cost';
-        const description = move.description || 'Basic attack';
-
-        let moveInfoText = `${moveName}: ${description} (${damageRange} damage, ${manaText})`;
-        if (move.freezeChance) {
-          moveInfoText += `, ${Math.round(move.freezeChance * 100)}% freeze chance`;
-        }
-
-        addToCombatLog(moveInfoText);
-      }
+    function initPromptScreen() {
+        // This functionality is now handled by GameHUD
+        return;
     }
 
-    // Helper function to add combat log entries
-    function addToCombatLog(message) {
-      const combatLog = document.getElementById('combat-log');
-      if (!combatLog) {
-        const gameScreen = document.getElementById('game-screen');
-        if (!gameScreen) return;
-
-        const logContainer = document.createElement('div');
-        logContainer.id = 'combat-log-container';
-
-        const log = document.createElement('div');
-        log.id = 'combat-log';
-        logContainer.appendChild(log);
-
-        gameScreen.appendChild(logContainer);
-      }
-
-      const combatLogElement = document.getElementById('combat-log');
-      const entry = document.createElement('div');
-      entry.className = 'log-entry';
-      entry.textContent = message;
-      combatLogElement.appendChild(entry);
-      combatLogElement.scrollTop = combatLogElement.scrollHeight;
+    function updatePlayerStatusDisplay() {
+        // This functionality is now handled by GameHUD
+        return;
     }
 
-// Make selectCharacter available globally
-    window.selectCharacter = selectCharacter;
+    function hidePromptScreen() {
+        // This functionality is now handled by GameHUD
+        return;
+    }
+
+    function showPromptScreen() {
+        // This functionality is now handled by GameHUD
+        return;
+    }
+
+    // Make selectCharacter available globally
+    window.selectCharacter = function(choice) {
+        const characterMap = {
+            1: 'Swordsman',
+            2: 'Mage',
+            3: 'FrostRevenant',
+            4: 'CelestialMonk'
+        };
+
+        selectedCharacter = characterMap[choice];
+
+        const buttons = document.querySelectorAll('.character-options button');
+        buttons.forEach(btn => btn.classList.remove('selected'));
+
+        const selectedBtn = document.querySelector(`.character-options button:nth-child(${choice})`);
+        if (selectedBtn) {
+            selectedBtn.classList.add('selected');
+        }
+
+        document.getElementById('character-name-input').style.display = 'block';
+    };
 
 
 
@@ -699,146 +400,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Initialize the prompt screen
 function initPromptScreen() {
-    const gameScreen = document.getElementById('game-screen');
-    if (!document.getElementById('prompt-screen')) {
-        const promptScreen = document.createElement('div');
-        promptScreen.id = 'prompt-screen';
-        promptScreen.innerHTML = `
-            <div class="player-status"></div>
-            <div class="game-log"></div>
-        `;
-        gameScreen.appendChild(promptScreen);
-    }
-
-    updatePlayerStatusDisplay();
-    addToGameLog('Game started! Choose your path...', 'status');
+    // This functionality is now handled by GameHUD
+    return;
 }
 
 // Update player stats in the prompt screen
 function updatePlayerStatusDisplay() {
-    const playerStatus = document.querySelector('.player-status');
-    if (!playerStatus || !selectedCharacterType) return;
-
-    playerStatus.innerHTML = `
-        <h3>${selectedCharacterType.type}</h3>
-        <div class="player-stats">
-            <div class="stat-item">
-                <span class="stat-label">Health:</span>
-                <span>${selectedCharacterType.health}/${selectedCharacterType.maxHealth}</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">Attack:</span>
-                <span>${selectedCharacterType.attack}</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">Defense:</span>
-                <span>${selectedCharacterType.defense}</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">Level:</span>
-                <span>${selectedCharacterType.level}</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">XP:</span>
-                <span>${selectedCharacterType.xp}/${selectedCharacterType.level * 100}</span>
-            </div>
-        </div>
-        <div class="stat-bar">
-            <div class="health-fill" style="width: ${(selectedCharacterType.health / selectedCharacterType.maxHealth) * 100}%"></div>
-        </div>
-    `;
+    // This functionality is now handled by GameHUD
+    return;
 }
 
 // Functions to show/hide prompt screen
 function hidePromptScreen() {
-    const promptScreen = document.getElementById('prompt-screen');
-    if (promptScreen) {
-        promptScreen.style.display = 'none';
-        document.body.classList.remove('prompt-active');
-        document.body.classList.add('prompt-inactive');
-    }
+    // This functionality is now handled by GameHUD
+    return;
 }
 
 function showPromptScreen() {
-    const promptScreen = document.getElementById('prompt-screen');
-    if (promptScreen) {
-        promptScreen.style.display = 'block';
-        document.body.classList.add('prompt-active');
-        document.body.classList.remove('prompt-inactive');
-    }
+    // This functionality is now handled by GameHUD
+    return;
 }
 
 // Check for nearby interactive elements
 function checkProximityInteractions() {
-    const player = document.querySelector('.player');
-    if (!player) return;
-
-    const contextButtons = document.getElementById('context-buttons');
-    if (!contextButtons) return;
-
-    // Check monsters
-    document.querySelectorAll('.monster-sprite').forEach((monster, index) => {
-        const distance = getDistanceToPlayer(monster);
-
-        if (distance < 32) {
-            monster.classList.add('nearby');
-            if (!contextButtons.querySelector('.fight-button')) {
-                const fightButton = document.createElement('button');
-                fightButton.className = 'action-button fight-button';
-                fightButton.textContent = 'Fight';
-                fightButton.onclick = () => startBattleMode(index);
-
-                const runButton = document.createElement('button');
-                runButton.className = 'action-button run-button';
-                runButton.textContent = 'Run';
-                runButton.onclick = () => handleRunAway();
-
-                contextButtons.innerHTML = '';
-                contextButtons.appendChild(fightButton);
-                contextButtons.appendChild(runButton);
-            }
-        } else {
-            monster.classList.remove('nearby');
-        }
-    });
-
-    // Check chests
-    document.querySelectorAll('.treasure-chest').forEach(chest => {
-        const distance = getDistanceToPlayer(chest);
-
-        if (distance < 32 && !chest.classList.contains('looted')) {
-            chest.classList.add('nearby');
-            if (!contextButtons.querySelector('.loot-button')) {
-                const lootButton = document.createElement('button');
-                lootButton.className = 'action-button loot-button';
-                lootButton.textContent = 'Loot Chest';
-                lootButton.onclick = () => {
-                    lootChest();
-                    chest.classList.remove('nearby');
-                    chest.classList.add('looted');
-                    contextButtons.innerHTML = '';
-                };
-
-                contextButtons.innerHTML = '';
-                contextButtons.appendChild(lootButton);
-            }
-        } else {
-            chest.classList.remove('nearby');
-        }
-    });
-}
-
-    // Check slimes
-    document.querySelectorAll('.slime').forEach(slime => {
-        const distance = getDistanceToPlayer(slime);
-
-        if (distance < 32) {
-            slime.classList.add('nearby');
-            handleSlimeDamage();
-        } else {
-            slime.classList.remove('nearby');
-        }
-    });
+    // This functionality is now handled by InteractionManager
+    return;
 }
 
 // Check if player is near any monsters
@@ -883,70 +469,8 @@ function checkNearbyChests() {
 
 // Enter combat mode in the prompt screen
 function enterCombatMode() {
-    const promptScreen = document.getElementById('prompt-screen');
-    const contextButtons = document.getElementById('context-buttons');
-    const contextMessage = document.getElementById('context-message');
-    const monsterInfo = document.getElementById('monster-info');
-
-    if (!promptScreen || !contextButtons || !contextMessage || !monsterInfo) return;
-
-    promptScreen.classList.add('combat-mode');
-    monsterInfo.style.display = 'block';
-
-    // Find the active monster
-    const activeMonsterIndex = currentMonsters.findIndex(m => m.isAlive);
-    if (activeMonsterIndex === -1) return;
-
-    const monster = currentMonsters[activeMonsterIndex];
-
-    // Update monster info
-    document.getElementById('monster-name').textContent = monster.name;
-    document.getElementById('monster-health').textContent = monster.health;
-    document.getElementById('monster-max-health').textContent = monster.maxHealth;
-    document.getElementById('monster-health-bar').style.width = `${(monster.health / monster.maxHealth) * 100}%`;
-    document.getElementById('monster-attack').textContent = monster.attack;
-    document.getElementById('monster-defense').textContent = monster.defense;
-    document.getElementById('monster-description').textContent = monster.description || '';
-
-    // Set combat message
-    contextMessage.textContent = 'Choose your attack:';
-
-    // Generate ability buttons    const characterMoves = movesets[selectedCharacterType.type];
-    for (const moveName in characterMoves) {
-        const move = characterMoves[moveName];
-
-        const abilityBtn = document.createElement('button');
-        abilityBtn.className = 'action-button ability-button';
-        if (moveName === selectedMove) {
-            abilityBtn.classList.add('active');
-        }
-
-        // Show mana cost for abilities that use mana
-        const manaText = move.mana > 0 ? ` (${move.mana} MP)` : '';
-        abilityBtn.textContent = `${moveName}${manaText}`;
-        abilityBtn.onclick = () => setMove(moveName);
-
-        // Disable if not enough mana
-        if (move.mana > selectedCharacterType.mana) {
-            abilityBtn.disabled = true;
-            abilityBtn.style.opacity = '0.5';
-        }
-
-        contextButtons.appendChild(abilityBtn);
-    }
-
-    // Add attack button after selecting an ability
-    const attackBtn = document.createElement('button');
-    attackBtn.className = 'action-button fight-button';
-    attackBtn.style.width = '100%';
-    attackBtn.style.marginTop = '5px';
-    attackBtn.textContent = `Attack ${monster.name}`;
-    attackBtn.onclick = () => {
-        // Find the proper index for the attack function
-        const visibleMonsterIndex = currentMonsters.findIndex(m => m.isAlive) + 1;
-        attack(visibleMonsterIndex);
-    };
-    contextButtons.appendChild(attackBtn);
+    // This functionality is now handled by InteractionManager
+    return;
 }
 
 // Rest function to recover some health
@@ -1099,7 +623,7 @@ function createRoom(x = 0, y = 0) {
     room.dataset.x = x;
     room.dataset.y = y;
 
-    // Add single random door
+    // Add a single door in a random position
     const directions = ['north', 'south', 'east', 'west'];
     const randomDirection = directions[Math.floor(Math.random() * directions.length)];
     const door = document.createElement('div');
@@ -1168,30 +692,44 @@ function transitionToNewRoom(direction) {
 
     currentRoom.style.opacity = '0';
 
+    const directions = {
+        north: 'northern',
+        south: 'southern',
+        east: 'eastern',
+        west: 'western'
+    };
+
+    addToGameLog(`Player moved through ${directions[direction]} door to a new room`, 'movement');
+
     setTimeout(() => {
         currentRoom.remove();
         const newRoom = createRoom();
         document.querySelector('.game-environment').appendChild(newRoom);
 
-        // Position player near the opposite door
-        const oppositeDirection = {
-            'north': 'south',
-            'south': 'north',
-            'east': 'west',
-            'west': 'east'
-        }[direction];
+        // Position player based on entry direction
+        const playerRect = document.querySelector('.player').getBoundingClientRect();
+        const roomRect = newRoom.getBoundingClientRect();
 
-        const oppositeDoor = newRoom.querySelector(`.door.${oppositeDirection}`);
-        if (oppositeDoor) {
-            const rect = oppositeDoor.getBoundingClientRect();
-            playerPosition.x = rect.left + rect.width/2 - 20;
-            playerPosition.y = rect.top + rect.height/2 - 20;
-            updatePlayerPosition();
-
-            // Log room transition
-            addToGameLog(`Moved through ${direction} door to new room`, 'movement');
+        switch(direction) {
+            case 'north':
+                playerPosition.x = roomRect.width / 2 - playerRect.width / 2;
+                playerPosition.y = roomRect.height - playerRect.height - 40;
+                break;
+            case 'south':
+                playerPosition.x = roomRect.width / 2 - playerRect.width / 2;
+                playerPosition.y = 40;
+                break;
+            case 'east':
+                playerPosition.x = 40;
+                playerPosition.y = roomRect.height / 2 - playerRect.height / 2;
+                break;
+            case 'west':
+                playerPosition.x = roomRect.width - playerRect.width - 40;
+                playerPosition.y = roomRect.height / 2 - playerRect.height / 2;
+                break;
         }
 
+        updatePlayerPosition();
         newRoom.style.opacity = '1';
     }, 500);
 }
@@ -1796,7 +1334,7 @@ function handlePostCombatEvent() {
             addToCombatLog(`Floor ${currentFloor} cleared! Advance to find the stairs to the next floor.`);
             showFloorStairs();
         } else {
-            addToCombatLog("Congratulations! You have defeated the Lordof the Tomb and completed the game!");
+            addToCombatLog("Congratulations! You have defeated the Lord of the Tomb and completed the game!");
             // Show victory screen
             const gameScreen = document.getElementById('game-screen');
             gameScreen.innerHTML = `
@@ -2326,33 +1864,31 @@ const ROOM_HEIGHT = 468;
 
 // Function to check for door interactions
 function checkDoorInteractions() {
-    const doors = document.querySelectorAll('.door');
-    let nearDoor = false;
+    const door = document.querySelector('.door');
+    if (!door) return false;
 
-    doors.forEach(door => {
-        const doorRect = door.getBoundingClientRect();
-        const playerRect = document.querySelector('.player').getBoundingClientRect();
+    const doorRect = door.getBoundingClientRect();
+    const playerRect = document.querySelector('.player').getBoundingClientRect();
 
-        const distance = Math.sqrt(
-            Math.pow((doorRect.left + doorRect.width/2) - (playerRect.left + playerRect.width/2), 2) +
-            Math.pow((doorRect.top + doorRect.height/2) - (playerRect.top + playerRect.height/2), 2)
-        );
+    const distance = Math.sqrt(
+        Math.pow((doorRect.left + doorRect.width/2) - (playerRect.left + playerRect.width/2), 2) +
+        Math.pow((doorRect.top + doorRect.height/2) - (playerRect.top + playerRect.height/2), 2)
+    );
 
-        if (distance < DOOR_INTERACTION_DISTANCE) {
-            door.classList.add('door-active');
-            nearDoor = true;
+    if (distance < DOOR_INTERACTION_DISTANCE) {
+        door.classList.add('door-active');
 
-            // Automatic room transition when near door
-            const direction = door.classList.contains('north') ? 'north' :
-                            door.classList.contains('south') ? 'south' :
-                            door.classList.contains('east') ? 'east' : 'west';
-            transitionToNewRoom(direction);
-        } else {
-            door.classList.remove('door-active');
-        }
-    });
+        // Get door direction
+        const direction = door.classList.contains('north') ? 'north' :
+                        door.classList.contains('south') ? 'south' :
+                        door.classList.contains('east') ? 'east' : 'west';
 
-    return nearDoor;
+        transitionToNewRoom(direction);
+        return true;
+    } else {
+        door.classList.remove('door-active');
+        return false;
+    }
 }
 
 function transitionToNewRoom(direction) {
@@ -2361,30 +1897,44 @@ function transitionToNewRoom(direction) {
 
     currentRoom.style.opacity = '0';
 
+    const directions = {
+        north: 'northern',
+        south: 'southern',
+        east: 'eastern',
+        west: 'western'
+    };
+
+    addToGameLog(`Player moved through ${directions[direction]} door to a new room`, 'movement');
+
     setTimeout(() => {
         currentRoom.remove();
         const newRoom = createRoom();
         document.querySelector('.game-environment').appendChild(newRoom);
 
-        // Position player near the opposite door
-        const oppositeDirection = {
-            'north': 'south',
-            'south': 'north',
-            'east': 'west',
-            'west': 'east'
-        }[direction];
+        // Position player based on entry direction
+        const playerRect = document.querySelector('.player').getBoundingClientRect();
+        const roomRect = newRoom.getBoundingClientRect();
 
-        const oppositeDoor = newRoom.querySelector(`.door.${oppositeDirection}`);
-        if (oppositeDoor) {
-            const rect = oppositeDoor.getBoundingClientRect();
-            playerPosition.x = rect.left + rect.width/2 - 20;
-            playerPosition.y = rect.top + rect.height/2 - 20;
-            updatePlayerPosition();
-
-            // Log room transition
-            addToGameLog(`Moved through ${direction} door to new room`, 'movement');
+        switch(direction) {
+            case 'north':
+                playerPosition.x = roomRect.width / 2 - playerRect.width / 2;
+                playerPosition.y = roomRect.height - playerRect.height - 40;
+                break;
+            case 'south':
+                playerPosition.x = roomRect.width / 2 - playerRect.width / 2;
+                playerPosition.y = 40;
+                break;
+            case 'east':
+                playerPosition.x = 40;
+                playerPosition.y = roomRect.height / 2 - playerRect.height / 2;
+                break;
+            case 'west':
+                playerPosition.x = roomRect.width - playerRect.width - 40;
+                playerPosition.y = roomRect.height / 2 - playerRect.height / 2;
+                break;
         }
 
+        updatePlayerPosition();
         newRoom.style.opacity = '1';
     }, 500);
 }
@@ -2405,3 +1955,266 @@ function addToGameLog(message, type) {
         gameLog.removeChild(gameLog.lastChild);
     }
 }
+
+class GameHUD {
+    constructor() {
+        this.container = document.createElement('div');
+        this.container.className = 'game-hud';
+        document.body.appendChild(this.container);
+
+        this.initializeHUD();
+        this.setupEventListeners();
+    }
+
+    initializeHUD() {
+        // Create player stats section
+        this.statsSection = document.createElement('div');
+        this.statsSection.className = 'hud-section';
+        this.container.appendChild(this.statsSection);
+
+        // Create game log section
+        this.logSection = document.createElement('div');
+        this.logSection.className = 'game-log';
+        this.container.appendChild(this.logSection);
+
+        // Create interaction panel
+        this.interactionPanel = document.createElement('div');
+        this.interactionPanel.className = 'interaction-panel';
+        this.container.appendChild(this.interactionPanel);
+
+        this.updatePlayerStats();
+    }
+
+    updatePlayerStats(stats = {
+        health: 100,
+        maxHealth: 100,
+        mana: 100,
+        maxMana: 100,
+        level: 1,
+        exp: 0
+    }) {
+        this.statsSection.innerHTML = `
+            <div class="player-stats-container">
+                <div class="stat-group">
+                    <div class="stat-label">
+                        <span>Health</span>
+                        <span class="stat-value">${stats.health}/${stats.maxHealth}</span>
+                    </div>
+                    <div class="stat-bar">
+                        <div class="stat-fill health-fill" style="width: ${(stats.health / stats.maxHealth) * 100}%"></div>
+                    </div>
+                </div>
+                <div class="stat-group">
+                    <div class="stat-label">
+                        <span>Mana</span>
+                        <span class="stat-value">${stats.mana}/${stats.maxMana}</span>
+                    </div>
+                    <div class="stat-bar">
+                        <div class="stat-fill mana-fill" style="width: ${(stats.mana / stats.maxMana) * 100}%"></div>
+                    </div>
+                </div>
+                <div class="stat-label">
+                    <span>Level ${stats.level}</span>
+                    <span class="stat-value">EXP: ${stats.exp}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    addLogEntry(message, type = 'status') {
+        const entry = document.createElement('div');
+        entry.className = `log-entry ${type}`;
+        entry.textContent = message;
+
+        this.logSection.insertBefore(entry, this.logSection.firstChild);
+
+        // Keep only last 50 messages
+        while (this.logSection.children.length > 50) {
+            this.logSection.removeChild(this.logSection.lastChild);
+        }
+
+        // Animate new entry
+        entry.style.opacity = '0';
+        entry.style.transform = 'translateX(-10px)';
+        requestAnimationFrame(() => {
+            entry.style.transition = 'all 0.3s ease-out';
+            entry.style.opacity = '1';
+            entry.style.transform = 'translateX(0)';
+        });
+    }
+
+    showInteraction(title, actions) {
+        this.interactionPanel.innerHTML = `
+            <div class="interaction-title">${title}</div>
+            <div class="interaction-buttons">
+                ${actions.map(action => `
+                    <button class="action-button ${action.type}-button" data-action="${action.id}">
+                        ${action.icon ? `<i class="${action.icon}"></i>` : ''}
+                        ${action.label}
+                    </button>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    hideInteraction() {
+        this.interactionPanel.innerHTML = '';
+    }
+
+    showTooltip(content, x, y) {
+        let tooltip = document.querySelector('.game-tooltip');
+        if (!tooltip) {
+            tooltip = document.createElement('div');
+            tooltip.className = 'game-tooltip';
+            document.body.appendChild(tooltip);
+        }
+
+        tooltip.innerHTML = `
+            <div class="tooltip-title">${content.title}</div>
+            <div class="tooltip-content">${content.description}</div>
+        `;
+
+        // Position tooltip
+        const rect = tooltip.getBoundingClientRect();
+        const margin = 10;
+
+        // Keep tooltip within viewport
+        x = Math.min(x, window.innerWidth - rect.width - margin);
+        y = Math.min(y, window.innerHeight - rect.height - margin);
+
+        tooltip.style.left = `${x}px`;
+        tooltip.style.top = `${y}px`;
+    }
+
+    hideTooltip() {
+        const tooltip = document.querySelector('.game-tooltip');
+        if (tooltip) {
+            tooltip.remove();
+        }
+    }
+
+    showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = 'game-notification';
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        // Remove notification after 3 seconds
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translate(-50%, 20px)';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    setupEventListeners() {
+        // Handle interaction button clicks
+        this.interactionPanel.addEventListener('click', (e) => {
+            const button = e.target.closest('.action-button');
+            if (button) {
+                const actionId = button.dataset.action;
+                this.handleAction(actionId);
+            }
+        });
+
+        // Handle tooltip triggers
+        document.addEventListener('mouseover', (e) => {
+            const tooltipTrigger = e.target.closest('[data-tooltip]');
+            if (tooltipTrigger) {
+                const content = JSON.parse(tooltipTrigger.dataset.tooltip);
+                this.showTooltip(content, e.clientX + 10, e.clientY + 10);
+            }
+        });
+
+        document.addEventListener('mouseout', (e) => {
+            const tooltipTrigger = e.target.closest('[data-tooltip]');
+            if (tooltipTrigger) {
+                this.hideTooltip();
+            }
+        });
+    }
+
+    handleAction(actionId) {
+        // Dispatch custom event for action handling
+        const event = new CustomEvent('game-action', {
+            detail: { actionId }
+        });
+        document.dispatchEvent(event);
+    }
+}
+
+// Initialize interaction manager
+class InteractionManager {
+    constructor(gameHUD) {
+        this.gameHUD = gameHUD;
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        document.addEventListener('game-action', (e) => {
+            this.handleGameAction(e.detail.actionId);
+        });
+    }
+
+    handleGameAction(actionId) {
+        switch (actionId) {
+            case 'fight':
+                this.startCombat();
+                break;
+            case 'loot':
+                this.handleLoot();
+                break;
+            case 'interact':
+                this.handleInteraction();
+                break;
+            // Add more action handlers as needed
+        }
+    }
+
+    startCombat() {
+        this.gameHUD.addLogEntry('Entering combat...', 'combat');
+        // Add combat initialization logic
+    }
+
+    handleLoot() {
+        this.gameHUD.addLogEntry('Searching for loot...', 'loot');
+        // Add looting logic
+    }
+
+    handleInteraction() {
+        this.gameHUD.addLogEntry('Interacting...', 'status');
+        // Add interaction logic
+    }
+
+    showMonsterInteraction(monster) {
+        this.gameHUD.showInteraction('Monster Encountered', [
+            {
+                id: 'fight',
+                type: 'fight',
+                label: 'Fight',
+                icon: 'fas fa-sword'
+            },
+            {
+                id: 'run',
+                type: 'interact',
+                label: 'Run Away',
+                icon: 'fas fa-running'
+            }
+        ]);
+    }
+
+    showChestInteraction(chest) {
+        this.gameHUD.showInteraction('Treasure Found', [
+            {
+                id: 'loot',
+                type: 'loot',
+                label: 'Open Chest',
+                icon: 'fas fa-chest'
+            }
+        ]);
+    }
+}
+
+// Initialize the systems
+const gameHUD = new GameHUD();
+const interactionManager = new InteractionManager(gameHUD);
