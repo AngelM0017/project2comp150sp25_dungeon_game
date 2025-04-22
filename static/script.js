@@ -57,25 +57,32 @@ function checkCollisions() {
     const monsters = document.querySelectorAll('.monster');
     const player = document.querySelector('.player');
     const treasures = document.querySelectorAll('.treasure');
+    const stairs = document.querySelector('.floor-stairs');
 
     monsters.forEach(monster => {
         if (isColliding(player, monster)) {
             monster.remove();
             monstersDefeated++;
-            if (monstersDefeated >= 2) {
-                unlockFloorProgression();
-            }
+            unlockFloorProgression();
         }
     });
 
     treasures.forEach(treasure => {
         if (isColliding(player, treasure)) {
             treasure.remove();
-            if (monstersDefeated >= 2) {
-                unlockFloorProgression();
-            }
+            unlockFloorProgression();
         }
     });
+
+    if (stairs && isColliding(player, stairs)) {
+        if (currentFloor < maxFloor) {
+            currentFloor++;
+            document.getElementById('current-floor').textContent = currentFloor;
+            initializeGameEnvironment();
+        } else {
+            alert('Congratulations! You have completed all floors!');
+        }
+    }
 }
 
 function isColliding(element1, element2) {
@@ -148,15 +155,15 @@ function updatePlayerPosition() {
 
 function unlockFloorProgression() {
     if (currentFloor < maxFloor) {
-        const stairs = document.createElement('div');
-        stairs.className = 'floor-stairs';
-        stairs.style.display = 'block';
-        document.querySelector('.game-environment').appendChild(stairs);
-
-        stairs.addEventListener('click', () => {
-            currentFloor++;
-            initializeGameEnvironment();
-        });
+        const existingStairs = document.querySelector('.floor-stairs');
+        if (!existingStairs) {
+            const stairs = document.createElement('div');
+            stairs.className = 'floor-stairs';
+            stairs.style.display = 'block';
+            stairs.style.right = '100px';
+            stairs.style.bottom = '100px';
+            document.querySelector('.game-environment').appendChild(stairs);
+        }
     }
 }
 
