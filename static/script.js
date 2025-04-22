@@ -1,14 +1,56 @@
-let selectedCharacter = null;
-let selectedCharacterType = null;
-let currentMonsters = [];
-let selectedMove = 'Basic Attack';
-let inBattleMode = false;
-let currentFloor = 1;
-let monsterSprites = [];
 let playerPosition = { x: 400, y: 300 };
-let currentRoom = { x: 0, y: 0 };
-const rooms = new Map();
 const moveSpeed = 5;
+const keys = {
+    w: false,
+    a: false,
+    s: false,
+    d: false
+};
+
+// Add keyboard event listeners
+document.addEventListener('keydown', (e) => {
+    const key = e.key.toLowerCase();
+    if (keys.hasOwnProperty(key)) {
+        keys[key] = true;
+        e.preventDefault();
+    }
+});
+
+document.addEventListener('keyup', (e) => {
+    const key = e.key.toLowerCase();
+    if (keys.hasOwnProperty(key)) {
+        keys[key] = false;
+    }
+});
+
+function updateMovement() {
+    const player = document.querySelector('.player');
+    if (!player) return;
+
+    let dx = 0;
+    let dy = 0;
+
+    if (keys.w) dy -= moveSpeed;  // Move up
+    if (keys.s) dy += moveSpeed;  // Move down
+    if (keys.a) dx -= moveSpeed;  // Move left
+    if (keys.d) dx += moveSpeed;  // Move right
+
+    // Allow diagonal movement
+    if ((keys.w || keys.s) && (keys.a || keys.d)) {
+        dx *= 0.707;
+        dy *= 0.707;
+    }
+
+    // Update position
+    playerPosition.x = Math.max(20, Math.min(760, playerPosition.x + dx));
+    playerPosition.y = Math.max(20, Math.min(540, playerPosition.y + dy));
+
+    player.style.left = `${playerPosition.x}px`;
+    player.style.top = `${playerPosition.y}px`;
+}
+
+// Add movement interval
+setInterval(updateMovement, 16);
 const keys = {
     w: false,
     a: false,

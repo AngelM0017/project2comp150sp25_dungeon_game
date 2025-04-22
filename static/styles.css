@@ -750,16 +750,28 @@ button:disabled {
   border-radius: 5px;
 }
 
+.game-container {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    margin: 20px auto;
+    background: #1a1a2e;
+    border: 2px solid #2a2a4e;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
 .player {
-  position: absolute;
-  width: 40px;
-  height: 60px;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  transform-origin: center bottom;
-  transition: transform 0.2s ease, left 0.1s ease, top 0.1s ease;
-  z-index: 100;
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    background: #6a5acd;
+    border-radius: 50%;
+    left: 400px;
+    top: 300px;
+    transition: left 0.1s ease, top 0.1s ease;
+    box-shadow: 0 0 10px rgba(106, 90, 205, 0.5);
+    z-index: 100;
 }
 
 /* Base player sprite structure with improved visibility */
