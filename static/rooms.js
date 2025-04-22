@@ -34,7 +34,7 @@ class RoomManager {
 
         switch (type) {
             case this.roomTypes.COMBAT:
-                contents.monsters = this.generateMonsters(1 + Math.floor(Math.random() * 3));
+                contents.monsters = this.generateMonsters(1 + Math.floor(Math.random() * (2 + currentFloor)));
                 if (Math.random() < 0.3) contents.treasures.push(this.generateTreasure());
                 break;
             case this.roomTypes.TREASURE:

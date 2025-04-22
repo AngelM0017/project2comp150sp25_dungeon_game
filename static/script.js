@@ -1,4 +1,6 @@
 let playerPosition = { x: 400, y: 300 };
+let currentFloor = 1;
+const maxFloor = 7;
 const moveSpeed = 5;
 const keys = {
     w: false,
@@ -98,3 +100,31 @@ window.selectCharacter = function(choice) {
 
 // Make startGame function available globally
 window.startGame = startGame;
+
+function progressToNextFloor() {
+    if (currentFloor < maxFloor) {
+        currentFloor++;
+        document.getElementById('current-floor').textContent = currentFloor;
+        // Increase difficulty with each floor
+        const difficultyMultiplier = 1 + (currentFloor * 0.2);
+        
+        // Update game environment for new floor
+        updateGameEnvironment();
+        
+        // Display floor transition message
+        const message = `You've reached Floor ${currentFloor}!`;
+        document.getElementById('context-message').textContent = message;
+    } else {
+        // Player has reached the final floor
+        document.getElementById('context-message').textContent = 'You\'ve reached the final floor!';
+    }
+}
+
+function updateGameEnvironment() {
+    // Reset player position for new floor
+    playerPosition = { x: 400, y: 300 };
+    updatePlayerPosition();
+    
+    // Generate new floor layout
+    generateDungeon(9 + currentFloor); // Increase room count with floor
+}
