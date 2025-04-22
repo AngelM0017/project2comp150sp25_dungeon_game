@@ -753,8 +753,9 @@ button:disabled {
 .player {
     position: absolute;
     width: 40px;
-    height: 60px;
+    height: 40px;
     background: #6a5acd;
+    border-radius: 50%;
     border-radius: 8px;
     transform-origin: center;
     transition: left 0.1s ease, top 0.1s ease;
