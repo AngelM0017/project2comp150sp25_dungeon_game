@@ -65,7 +65,7 @@ function updateHealthDisplay() {
     healthDisplay.style.color = 'white';
     healthDisplay.style.fontSize = '20px';
     healthDisplay.innerHTML = `Health: ${playerHealth}`;
-    
+
     const existingDisplay = document.querySelector('.health-display');
     if (existingDisplay) {
         existingDisplay.remove();
@@ -76,8 +76,8 @@ function updateHealthDisplay() {
 function checkCollisions() {
     const monsters = document.querySelectorAll('.monster');
     const player = document.querySelector('.player');
-    const treasures = document.querySelectorAll('.treasure');
     const stairs = document.querySelector('.floor-stairs');
+    const requiredMonsters = Math.floor(currentFloor * 1.5);
 
     monsters.forEach(monster => {
         if (isColliding(player, monster)) {
@@ -85,7 +85,7 @@ function checkCollisions() {
             playerHealth = Math.max(0, playerHealth - monsterDamage);
             updateHealthDisplay();
 
-            // Show damage effect
+            // Show player damage effect
             const damageText = document.createElement('div');
             damageText.className = 'damage-text';
             damageText.style.position = 'absolute';
@@ -96,20 +96,31 @@ function checkCollisions() {
             damageText.innerHTML = `-${monsterDamage}`;
             document.querySelector('.game-environment').appendChild(damageText);
 
-            // Remove damage text after animation
-            setTimeout(() => damageText.remove(), 1000);
+            // Remove monster and show monster damage
+            const monsterDamageText = document.createElement('div');
+            monsterDamageText.className = 'damage-text';
+            monsterDamageText.style.position = 'absolute';
+            monsterDamageText.style.color = '#ff0000';
+            monsterDamageText.style.fontSize = '20px';
+            monsterDamageText.style.left = monster.style.left;
+            monsterDamageText.style.top = monster.style.top;
+            monsterDamageText.innerHTML = 'Defeated!';
+            document.querySelector('.game-environment').appendChild(monsterDamageText);
+
+            // Remove damage texts after animation
+            setTimeout(() => {
+                damageText.remove();
+                monsterDamageText.remove();
+            }, 1000);
 
             // Remove monster
             monster.remove();
             monstersDefeated++;
-            
-            // Get required monster count for this floor
-            const requiredMonsters = Math.floor(currentFloor * 1.5);
-            
+
             // Update counter display
             const counterDisplay = document.querySelector('.counter-display');
             if (counterDisplay) {
-                counterDisplay.innerHTML = `Monsters defeated: ${monstersDefeated}/${requiredMonsters}`;
+                counterDisplay.innerHTML = `Monsters defeated: ${monstersDefeated}/${requiredMonsters} - Kill exactly ${requiredMonsters} monsters to proceed!`;
             }
 
             // Check if exactly the required number was defeated
@@ -128,17 +139,12 @@ function checkCollisions() {
         }
     });
 
-    treasures.forEach(treasure => {
-        if (isColliding(player, treasure)) {
-            treasure.remove();
-            unlockFloorProgression();
-        }
-    });
-
-    if (stairs && isColliding(player, stairs) && stairs.style.display === 'block') {
+    // Only allow level progression if requirements are met
+    if (stairs && isColliding(player, stairs) && stairs.style.display === 'block' && monstersDefeated === requiredMonsters) {
         if (currentFloor < maxFloor) {
             currentFloor++;
             playerHealth = 100; // Reset health when entering new floor
+            monstersDefeated = 0; // Reset monsters defeated
             updateHealthDisplay();
             document.getElementById('current-floor').textContent = currentFloor;
             initializeGameEnvironment();
@@ -180,10 +186,10 @@ function initializeGameEnvironment() {
 
     const gameEnvironment = document.querySelector('.game-environment');
     gameEnvironment.innerHTML = '<div class="player"></div>';
-    
+
     // Required monsters to defeat (increases with floor)
     const requiredMonsters = Math.floor(currentFloor * 1.5);
-    
+
     // Create counter display
     const counterDisplay = document.createElement('div');
     counterDisplay.className = 'counter-display';
@@ -197,7 +203,7 @@ function initializeGameEnvironment() {
 
     // Add more monsters than required
     const numMonsters = requiredMonsters + 3;
-    
+
     // Add monsters with increased stats per floor
     for(let i = 0; i < numMonsters; i++) {
         const monster = document.createElement('div');
@@ -244,7 +250,7 @@ function updatePlayerPosition() {
 function unlockFloorProgression() {
     const stairs = document.querySelector('.floor-stairs');
     const requiredMonsters = Math.floor(currentFloor * 1.5);
-    
+
     if (monstersDefeated === requiredMonsters && currentFloor < maxFloor) {
         if (stairs) {
             stairs.style.display = 'block';  // Show stairs when exact number of monsters are defeated
