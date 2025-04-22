@@ -79,6 +79,7 @@ function checkCollisions() {
     const stairs = document.querySelector('.floor-stairs');
     const requiredMonsters = Math.floor(currentFloor * 1.5);
 
+    // Check for monster collisions first
     monsters.forEach(monster => {
         if (isColliding(player, monster)) {
             // Player takes damage
@@ -139,8 +140,11 @@ function checkCollisions() {
         }
     });
 
-    // Only allow level progression if requirements are met
-    if (stairs && isColliding(player, stairs) && stairs.style.display === 'block' && monstersDefeated === requiredMonsters) {
+    // Check for stairs collision separately
+    if (stairs && 
+        stairs.style.display === 'block' && 
+        monstersDefeated === requiredMonsters && 
+        isColliding(player, stairs)) {
         if (currentFloor < maxFloor) {
             currentFloor++;
             playerHealth = 100; // Reset health when entering new floor
