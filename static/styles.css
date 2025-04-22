@@ -8,14 +8,16 @@
 
 .game-container {
   position: relative;
-  width: calc(100vw - 250px); /* Reduced from 300px for more game space */
+  width: calc(100vw - 300px);
   height: 100vh;
   margin: 0;
-  padding: 0;
+  padding: 20px;
   font-family: 'Segoe UI', Arial, sans-serif;
   overflow: hidden;
   background: linear-gradient(135deg, #1a0f0f 0%, #2a1f1f 100%);
-  float: left; /* Ensure it stays on the left */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .screen {
@@ -165,16 +167,14 @@ button:disabled {
 }
 
 .room {
-  position: absolute;
-  width: 1024px; /* Increased from 800px */
-  height: 768px; /* Increased from 600px */
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
+  width: 800px;
+  height: 600px;
   background: linear-gradient(45deg, #1a1a2e, #16213e);
   border: 2px solid #2a2a4e;
   border-radius: 8px;
   transition: all 0.5s ease-in-out;
+  margin: auto;
 }
 
 .room.active {
@@ -759,6 +759,8 @@ button:disabled {
   transform-origin: center bottom;
   transition: transform 0.2s ease, left 0.1s ease, top 0.1s ease;
   z-index: 100;
+  left: calc(50% - 20px);
+  top: calc(50% - 30px);
 }
 
 /* Base player sprite structure with improved visibility */
