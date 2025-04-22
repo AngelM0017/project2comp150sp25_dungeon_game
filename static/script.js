@@ -21,6 +21,7 @@ document.addEventListener('keydown', (e) => {
     const key = e.key.toLowerCase();
     if (keys.hasOwnProperty(key)) {
         keys[key] = true;
+        e.preventDefault(); // Prevent default scrolling
     }
 });
 
@@ -39,10 +40,10 @@ function updateMovement() {
     let dx = 0;
     let dy = 0;
 
-    if (keys.w) dy -= 1;  // Move up
-    if (keys.s) dy += 1;  // Move down
-    if (keys.a) dx -= 1;  // Move left
-    if (keys.d) dx += 1;  // Move right
+    if (keys.w) dy -= moveSpeed;  // Move up
+    if (keys.s) dy += moveSpeed;  // Move down
+    if (keys.a) dx -= moveSpeed;  // Move left
+    if (keys.d) dx += moveSpeed;  // Move right
 
     // Allow diagonal movement
     if (dx !== 0 && dy !== 0) {
