@@ -138,6 +138,8 @@ function checkCollisions() {
     if (stairs && isColliding(player, stairs)) {
         if (currentFloor < maxFloor) {
             currentFloor++;
+            playerHealth = 100; // Reset health when entering new floor
+            updateHealthDisplay();
             document.getElementById('current-floor').textContent = currentFloor;
             initializeGameEnvironment();
         } else {
