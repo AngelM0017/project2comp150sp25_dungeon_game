@@ -1659,6 +1659,22 @@ button:disabled {
     border-radius: 5px;
 }
 
+.floor-stairs {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background-color: #4CAF50;
+    border: 3px solid #45a049;
+    border-radius: 10px;
+    cursor: pointer;
+    z-index: 100;
+}
+
+.floor-stairs:hover {
+    background-color: #45a049;
+    transform: scale(1.1);
+}
+
 .mini-map-room.current {
   background: #ffd700;
   border-color: #ffed4a;

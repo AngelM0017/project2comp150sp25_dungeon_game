@@ -109,21 +109,31 @@ function initializeGameEnvironment() {
     const gameEnvironment = document.querySelector('.game-environment');
     gameEnvironment.innerHTML = '<div class="player"></div>';
 
-    // Add monsters
-    for (let i = 0; i < 2; i++) {
-        const monster = document.createElement('div');
-        monster.className = 'monster';
-        monster.style.left = `${100 + Math.random() * 600}px`;
-        monster.style.top = `${100 + Math.random() * 400}px`;
-        gameEnvironment.appendChild(monster);
-    }
+    // Add just one monster
+    const monster = document.createElement('div');
+    monster.className = 'monster';
+    monster.style.left = `${100 + Math.random() * 600}px`;
+    monster.style.top = `${100 + Math.random() * 400}px`;
+    gameEnvironment.appendChild(monster);
 
-    // Add treasure
-    const treasure = document.createElement('div');
-    treasure.className = 'treasure';
-    treasure.style.left = `${200 + Math.random() * 400}px`;
-    treasure.style.top = `${150 + Math.random() * 300}px`;
-    gameEnvironment.appendChild(treasure);
+    // Add stairs immediately for easy progression
+    const stairs = document.createElement('div');
+    stairs.className = 'floor-stairs';
+    stairs.style.display = 'block';
+    stairs.style.left = '600px';
+    stairs.style.top = '400px';
+    gameEnvironment.appendChild(stairs);
+
+    // Add click event to stairs
+    stairs.addEventListener('click', () => {
+        if (currentFloor < maxFloor) {
+            currentFloor++;
+            document.getElementById('current-floor').textContent = currentFloor;
+            initializeGameEnvironment();
+        } else {
+            alert('Congratulations! You have completed all floors!');
+        }
+    });
 
     updatePlayerPosition();
     document.getElementById('current-floor').textContent = currentFloor;
