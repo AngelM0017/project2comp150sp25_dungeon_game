@@ -415,7 +415,7 @@ def calculate_monster_damage(base_attack):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8080)
+    app.run(debug=True, host='0.0.0.0', port=5000)
 
 def place_random_door(room_element):
     # List of possible door positions
