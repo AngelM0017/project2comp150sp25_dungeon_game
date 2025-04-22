@@ -54,7 +54,7 @@ function updateMovement() {
 }
 
 let playerHealth = 100;
-let monsterDamage = 15 + (currentFloor * 5); // Damage increases with floor level
+let monsterDamage = 10 + (currentFloor * 3); // Reduced base damage and scaling
 
 function updateHealthDisplay() {
     const healthDisplay = document.createElement('div');
