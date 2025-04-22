@@ -39,12 +39,12 @@ function updateMovement() {
     let dx = 0;
     let dy = 0;
 
-    if (keys.w || keys.ArrowUp) dy -= 1;
-    if (keys.s || keys.ArrowDown) dy += 1;
-    if (keys.a || keys.ArrowLeft) dx -= 1;
-    if (keys.d || keys.ArrowRight) dx += 1;
+    if (keys.w) dy -= 1;  // Move up
+    if (keys.s) dy += 1;  // Move down
+    if (keys.a) dx -= 1;  // Move left
+    if (keys.d) dx += 1;  // Move right
 
-    // Normalize diagonal movement
+    // Allow diagonal movement
     if (dx !== 0 && dy !== 0) {
         dx *= 0.707;
         dy *= 0.707;
