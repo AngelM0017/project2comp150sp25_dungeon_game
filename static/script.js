@@ -2,6 +2,8 @@ let playerPosition = { x: 400, y: 300 };
 let currentFloor = 1;
 const maxFloor = 7;
 const moveSpeed = 5;
+let hasStairs = false; // Track if stairs are available
+let canProgress = false; // Track if player can progress to next floor
 const keys = {
     w: false,
     a: false,
@@ -127,4 +129,42 @@ function updateGameEnvironment() {
     
     // Generate new floor layout
     generateDungeon(9 + currentFloor); // Increase room count with floor
+    
+    // Update floor display
+    document.getElementById('current-floor').textContent = currentFloor;
+    
+    // Show floor transition message
+    const message = `Welcome to Floor ${currentFloor}`;
+    const contextMessage = document.getElementById('context-message');
+    if (contextMessage) {
+        contextMessage.textContent = message;
+    }
+    
+    // Reset floor progression flags
+    hasStairs = false;
+    canProgress = false;
+    
+    // Add stairs when player clears the floor
+    setTimeout(() => {
+        hasStairs = true;
+        const stairs = document.createElement('div');
+        stairs.className = 'floor-stairs';
+        stairs.style.display = 'block';
+        document.querySelector('.game-environment').appendChild(stairs);
+        
+        // Enable progression when player reaches stairs
+        stairs.addEventListener('click', () => {
+            if (canProgress && currentFloor < maxFloor) {
+                progressToNextFloor();
+            }
+        });
+    }, 1000);
+}
+
+function unlockFloorProgression() {
+    canProgress = true;
+    const contextMessage = document.getElementById('context-message');
+    if (contextMessage) {
+        contextMessage.textContent = 'You can now proceed to the next floor!';
+    }
 }
