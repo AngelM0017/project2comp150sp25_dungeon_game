@@ -40,15 +40,15 @@ function updateMovement() {
     let dx = 0;
     let dy = 0;
 
-    if (keys.w) dy -= moveSpeed;  // Move up
-    if (keys.s) dy += moveSpeed;  // Move down
-    if (keys.a) dx -= moveSpeed;  // Move left
-    if (keys.d) dx += moveSpeed;  // Move right
+    if (keys.w) playerPosition.y -= moveSpeed;  // Move up
+    if (keys.s) playerPosition.y += moveSpeed;  // Move down
+    if (keys.a) playerPosition.x -= moveSpeed;  // Move left
+    if (keys.d) playerPosition.x += moveSpeed;  // Move right
 
     // Allow diagonal movement
-    if (dx !== 0 && dy !== 0) {
-        dx *= 0.707;
-        dy *= 0.707;
+    if ((keys.w || keys.s) && (keys.a || keys.d)) {
+        playerPosition.x = playerPosition.x * 0.707;
+        playerPosition.y = playerPosition.y * 0.707;
     }
 
     // Calculate new position
