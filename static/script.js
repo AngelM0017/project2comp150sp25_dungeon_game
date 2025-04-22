@@ -53,6 +53,26 @@ function updateMovement() {
     checkCollisions();
 }
 
+let playerHealth = 100;
+let monsterDamage = 15 + (currentFloor * 5); // Damage increases with floor level
+
+function updateHealthDisplay() {
+    const healthDisplay = document.createElement('div');
+    healthDisplay.className = 'health-display';
+    healthDisplay.style.position = 'fixed';
+    healthDisplay.style.top = '20px';
+    healthDisplay.style.left = '20px';
+    healthDisplay.style.color = 'white';
+    healthDisplay.style.fontSize = '20px';
+    healthDisplay.innerHTML = `Health: ${playerHealth}`;
+    
+    const existingDisplay = document.querySelector('.health-display');
+    if (existingDisplay) {
+        existingDisplay.remove();
+    }
+    document.body.appendChild(healthDisplay);
+}
+
 function checkCollisions() {
     const monsters = document.querySelectorAll('.monster');
     const player = document.querySelector('.player');
@@ -61,9 +81,34 @@ function checkCollisions() {
 
     monsters.forEach(monster => {
         if (isColliding(player, monster)) {
+            // Player takes damage
+            playerHealth = Math.max(0, playerHealth - monsterDamage);
+            updateHealthDisplay();
+
+            // Show damage effect
+            const damageText = document.createElement('div');
+            damageText.className = 'damage-text';
+            damageText.style.position = 'absolute';
+            damageText.style.color = 'red';
+            damageText.style.fontSize = '20px';
+            damageText.style.left = `${playerPosition.x}px`;
+            damageText.style.top = `${playerPosition.y - 30}px`;
+            damageText.innerHTML = `-${monsterDamage}`;
+            document.querySelector('.game-environment').appendChild(damageText);
+
+            // Remove damage text after animation
+            setTimeout(() => damageText.remove(), 1000);
+
+            // Remove monster
             monster.remove();
             monstersDefeated++;
             unlockFloorProgression();
+
+            // Check if player died
+            if (playerHealth <= 0) {
+                alert('Game Over! You died!');
+                location.reload();
+            }
         }
     });
 
@@ -106,6 +151,8 @@ function startGame() {
     document.getElementById('character-select').style.display = 'none';
     document.getElementById('game-screen').style.display = 'block';
 
+    playerHealth = 100;
+    updateHealthDisplay();
     initializeGameEnvironment();
 }
 
