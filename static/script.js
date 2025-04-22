@@ -127,8 +127,32 @@ function updateGameEnvironment() {
     playerPosition = { x: 400, y: 300 };
     updatePlayerPosition();
     
-    // Generate new floor layout
-    generateDungeon(9 + currentFloor); // Increase room count with floor
+    // Generate new floor layout with content
+    const gameEnvironment = document.querySelector('.game-environment');
+    if (gameEnvironment) {
+        // Add monsters
+        const monsterCount = Math.min(2 + currentFloor, 5);
+        for (let i = 0; i < monsterCount; i++) {
+            const monster = document.createElement('div');
+            monster.className = 'monster';
+            monster.style.left = `${100 + Math.random() * 600}px`;
+            monster.style.top = `${100 + Math.random() * 400}px`;
+            gameEnvironment.appendChild(monster);
+        }
+
+        // Add treasure chest
+        const treasure = document.createElement('div');
+        treasure.className = 'treasure';
+        treasure.style.left = `${200 + Math.random() * 400}px`;
+        treasure.style.top = `${150 + Math.random() * 300}px`;
+        gameEnvironment.appendChild(treasure);
+
+        // Update objective message
+        const contextMessage = document.getElementById('context-message');
+        if (contextMessage) {
+            contextMessage.textContent = `Floor ${currentFloor}: Defeat ${monsterCount} monsters and collect the treasure!`;
+        }
+    }
     
     // Update floor display
     document.getElementById('current-floor').textContent = currentFloor;
