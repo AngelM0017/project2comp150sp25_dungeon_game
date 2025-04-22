@@ -102,7 +102,23 @@ function checkCollisions() {
             // Remove monster
             monster.remove();
             monstersDefeated++;
-            unlockFloorProgression();
+            
+            // Get required monster count for this floor
+            const requiredMonsters = Math.floor(currentFloor * 1.5);
+            
+            // Update counter display
+            const counterDisplay = document.querySelector('.counter-display');
+            if (counterDisplay) {
+                counterDisplay.innerHTML = `Monsters defeated: ${monstersDefeated}/${requiredMonsters}`;
+            }
+
+            // Check if exactly the required number was defeated
+            if (monstersDefeated === requiredMonsters) {
+                unlockFloorProgression();
+            } else if (monstersDefeated > requiredMonsters) {
+                alert('Game Over! You defeated too many monsters!');
+                location.reload();
+            }
 
             // Check if player died
             if (playerHealth <= 0) {
@@ -162,16 +178,31 @@ function initializeGameEnvironment() {
 
     const gameEnvironment = document.querySelector('.game-environment');
     gameEnvironment.innerHTML = '<div class="player"></div>';
+    
+    // Required monsters to defeat (increases with floor)
+    const requiredMonsters = Math.floor(currentFloor * 1.5);
+    
+    // Create counter display
+    const counterDisplay = document.createElement('div');
+    counterDisplay.className = 'counter-display';
+    counterDisplay.style.position = 'fixed';
+    counterDisplay.style.top = '50px';
+    counterDisplay.style.left = '20px';
+    counterDisplay.style.color = 'white';
+    counterDisplay.style.fontSize = '20px';
+    counterDisplay.innerHTML = `Defeat exactly ${requiredMonsters} monsters!`;
+    document.body.appendChild(counterDisplay);
 
-    // Calculate number of monsters based on floor level
-    const numMonsters = Math.min(1 + Math.floor(currentFloor * 1.5), 8);
+    // Add more monsters than required
+    const numMonsters = requiredMonsters + 3;
     
     // Add monsters with increased stats per floor
     for(let i = 0; i < numMonsters; i++) {
         const monster = document.createElement('div');
         monster.className = 'monster';
-        monster.style.left = `${100 + Math.random() * 600}px`;
-        monster.style.top = `${100 + Math.random() * 400}px`;
+        // Cluster monsters in a smaller area
+        monster.style.left = `${300 + Math.random() * 200}px`;
+        monster.style.top = `${200 + Math.random() * 200}px`;
         // Make monsters visually larger and darker with each floor
         monster.style.backgroundColor = `hsl(0, 50%, ${Math.max(20, 50 - currentFloor * 5)}%)`;
         monster.style.transform = `scale(${1 + currentFloor * 0.1})`;
