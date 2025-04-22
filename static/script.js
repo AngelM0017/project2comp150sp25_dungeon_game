@@ -40,20 +40,13 @@ function updateMovement() {
     let dx = 0;
     let dy = 0;
 
-    if (keys.w) dy -= 1;  // Move up
-    if (keys.s) dy += 1;  // Move down
-    if (keys.a) dx -= 1;  // Move left
-    if (keys.d) dx += 1;  // Move right
+    if (keys.w) dy -= moveSpeed;  // Move up
+    if (keys.s) dy += moveSpeed;  // Move down
+    if (keys.a) dx -= moveSpeed;  // Move left
+    if (keys.d) dx += moveSpeed;  // Move right
 
     // Allow diagonal movement
     if (dx !== 0 && dy !== 0) {
-        dx *= 0.707;  // Normalize diagonal movement
-        dy *= 0.707;
-    }
-
-    // Apply movement speed
-    dx *= moveSpeed;
-    dy *= moveSpeed;
         dx *= 0.707;
         dy *= 0.707;
     }
