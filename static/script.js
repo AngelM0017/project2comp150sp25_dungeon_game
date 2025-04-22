@@ -135,7 +135,7 @@ function checkCollisions() {
         }
     });
 
-    if (stairs && isColliding(player, stairs) && stairs.style.display !== 'none') {
+    if (stairs && isColliding(player, stairs) && stairs.style.display === 'block') {
         if (currentFloor < maxFloor) {
             currentFloor++;
             playerHealth = 100; // Reset health when entering new floor
