@@ -1,11 +1,11 @@
-let selectedCharacter = null;
-let selectedCharacterType = null;
-let currentMonsters = [];
-let selectedMove = 'Basic Attack';
-let inBattleMode = false;
-let currentFloor = 1;
-let monsterSprites = [];
 let playerPosition = { x: 400, y: 300 };
+const moveSpeed = 5;
+const keys = {
+    w: false,
+    a: false,
+    s: false,
+    d: false
+};
 let currentRoom = { x: 0, y: 0 };
 const rooms = new Map();
 const moveSpeed = 5;
