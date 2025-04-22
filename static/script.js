@@ -240,12 +240,12 @@ function updatePlayerPosition() {
 }
 
 function unlockFloorProgression() {
-    const monsters = document.querySelectorAll('.monster');
     const stairs = document.querySelector('.floor-stairs');
+    const requiredMonsters = Math.floor(currentFloor * 1.5);
     
-    if (monsters.length === 0 && currentFloor < maxFloor) {
+    if (monstersDefeated === requiredMonsters && currentFloor < maxFloor) {
         if (stairs) {
-            stairs.style.display = 'block';  // Show stairs only when all monsters are defeated
+            stairs.style.display = 'block';  // Show stairs when exact number of monsters are defeated
         }
     }
 }
