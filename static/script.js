@@ -116,17 +116,25 @@ function initializeGameEnvironment() {
     const gameEnvironment = document.querySelector('.game-environment');
     gameEnvironment.innerHTML = '<div class="player"></div>';
 
-    // Add just one monster
-    const monster = document.createElement('div');
-    monster.className = 'monster';
-    monster.style.left = `${100 + Math.random() * 600}px`;
-    monster.style.top = `${100 + Math.random() * 400}px`;
-    gameEnvironment.appendChild(monster);
+    // Calculate number of monsters based on floor level
+    const numMonsters = Math.min(1 + Math.floor(currentFloor * 1.5), 8);
+    
+    // Add monsters with increased stats per floor
+    for(let i = 0; i < numMonsters; i++) {
+        const monster = document.createElement('div');
+        monster.className = 'monster';
+        monster.style.left = `${100 + Math.random() * 600}px`;
+        monster.style.top = `${100 + Math.random() * 400}px`;
+        // Make monsters visually larger and darker with each floor
+        monster.style.backgroundColor = `hsl(0, 50%, ${Math.max(20, 50 - currentFloor * 5)}%)`;
+        monster.style.transform = `scale(${1 + currentFloor * 0.1})`;
+        gameEnvironment.appendChild(monster);
+    }
 
-    // Add stairs immediately for easy progression
+    // Add stairs but hide them initially
     const stairs = document.createElement('div');
     stairs.className = 'floor-stairs';
-    stairs.style.display = 'block';
+    stairs.style.display = 'none';  // Hide stairs initially
     stairs.style.left = '600px';
     stairs.style.top = '400px';
     gameEnvironment.appendChild(stairs);
@@ -154,15 +162,12 @@ function updatePlayerPosition() {
 }
 
 function unlockFloorProgression() {
-    if (currentFloor < maxFloor) {
-        const existingStairs = document.querySelector('.floor-stairs');
-        if (!existingStairs) {
-            const stairs = document.createElement('div');
-            stairs.className = 'floor-stairs';
-            stairs.style.display = 'block';
-            stairs.style.right = '100px';
-            stairs.style.bottom = '100px';
-            document.querySelector('.game-environment').appendChild(stairs);
+    const monsters = document.querySelectorAll('.monster');
+    const stairs = document.querySelector('.floor-stairs');
+    
+    if (monsters.length === 0 && currentFloor < maxFloor) {
+        if (stairs) {
+            stairs.style.display = 'block';  // Show stairs only when all monsters are defeated
         }
     }
 }
