@@ -191,8 +191,8 @@ function initializeGameEnvironment() {
     const gameEnvironment = document.querySelector('.game-environment');
     gameEnvironment.innerHTML = '<div class="player"></div>';
 
-    // Required monsters to defeat (increases with floor)
-    const requiredMonsters = Math.floor(currentFloor * 1.5);
+    // Required monsters to defeat (starts at 8, increases by 3 per floor)
+    const requiredMonsters = 8 + ((currentFloor - 1) * 3);
 
     // Create counter display
     const counterDisplay = document.createElement('div');
@@ -208,8 +208,10 @@ function initializeGameEnvironment() {
     // Spawn exactly the required number of monsters for the floor
     const numMonsters = requiredMonsters;
 
-    // Add monsters with increased stats per floor
+    // Add monsters with increased stats and size per floor
     for(let i = 0; i < numMonsters; i++) {
+        const monsterSize = 1 + (currentFloor * 0.15); // Monsters get 15% larger each floor
+        const monsterHealth = 100 + (currentFloor * 20); // Health increases by 20 per floor
         const monster = document.createElement('div');
         monster.className = 'monster';
         // Cluster monsters in a smaller area
