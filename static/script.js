@@ -275,10 +275,101 @@ window.selectCharacter = function(choice) {
 
 window.startGame = startGame;
 
-function enterTreasureRoom() {
+// Room type handlers
+function handleTrapRoom() {
+    const trapDamage = 5;
+    const damageInterval = setInterval(() => {
+        const monsters = document.querySelectorAll('.trap-monster');
+        monsters.forEach(monster => {
+            if (isColliding(document.querySelector('.player'), monster)) {
+                playerHealth = Math.max(0, playerHealth - trapDamage);
+                updateHealthDisplay();
+                showDamageEffect();
+            }
+        });
+    }, 1000);
+
+    // Store interval ID to clear when leaving room
+    window.currentRoomInterval = damageInterval;
+}
+
+function handleSanctuaryRoom() {
+    const healInterval = setInterval(() => {
+        if (playerHealth < 100) {
+            playerHealth = Math.min(100, playerHealth + 5);
+            updateHealthDisplay();
+            showHealEffect();
+        }
+    }, 1000);
+
+    // Store interval ID to clear when leaving room
+    window.currentRoomInterval = healInterval;
+}
+
+function showHealEffect() {
+    const healText = document.createElement('div');
+    healText.className = 'heal-text';
+    healText.style.position = 'absolute';
+    healText.style.color = '#4CAF50';
+    healText.style.left = `${playerPosition.x}px`;
+    healText.style.top = `${playerPosition.y - 30}px`;
+    healText.innerHTML = '+5';
+    document.querySelector('.game-environment').appendChild(healText);
+    setTimeout(() => healText.remove(), 1000);
+}
+
+function showDamageEffect() {
+    const damageText = document.createElement('div');
+    damageText.className = 'damage-text';
+    damageText.style.position = 'absolute';
+    damageText.style.color = '#ff0000';
+    damageText.style.left = `${playerPosition.x}px`;
+    damageText.style.top = `${playerPosition.y - 30}px`;
+    damageText.innerHTML = '-5';
+    document.querySelector('.game-environment').appendChild(damageText);
+    setTimeout(() => damageText.remove(), 1000);
+}
+
+function enterRoom(roomType) {
+    // Clear any existing room intervals
+    if (window.currentRoomInterval) {
+        clearInterval(window.currentRoomInterval);
+        window.currentRoomInterval = null;
+    }
+
     const gameEnvironment = document.querySelector('.game-environment');
     gameEnvironment.innerHTML = '<div class="player"></div>';
-    gameEnvironment.classList.add('treasure-room');
+    gameEnvironment.className = 'game-environment ' + roomType;
+
+    if (roomType === 'trap-room') {
+        // Add trap monsters
+        for (let i = 0; i < 3; i++) {
+            const monster = document.createElement('div');
+            monster.className = 'trap-monster';
+            monster.style.left = `${200 + Math.random() * 400}px`;
+            monster.style.top = `${150 + Math.random() * 300}px`;
+            gameEnvironment.appendChild(monster);
+        }
+        handleTrapRoom();
+    } else if (roomType === 'sanctuary-room') {
+        handleSanctuaryRoom();
+    }
+
+    // Add return door
+    const returnDoor = document.createElement('div');
+    returnDoor.className = 'return-door';
+    returnDoor.addEventListener('click', () => {
+        if (window.currentRoomInterval) {
+            clearInterval(window.currentRoomInterval);
+            window.currentRoomInterval = null;
+        }
+        initializeGameEnvironment();
+    });
+    gameEnvironment.appendChild(returnDoor);
+}
+
+function enterTreasureRoom() {
+    enterRoom('treasure-room');
 
     // Create treasure chest
     const chest = document.createElement('div');
