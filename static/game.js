@@ -347,10 +347,81 @@ class Game {
             x: 400,
             y: 300,
             speed: 5,
+
+    attack() {
+        if (this.player.attacking) return;
+        
+        this.player.attacking = true;
+        this.player.attackCooldown = true;
+
+        // Get the player sprite and arm
+        const playerSprite = document.querySelector('.player');
+        if (!playerSprite) return;
+
+        // Create body parts if they don't exist
+        if (!playerSprite.querySelector('.player-body')) {
+            playerSprite.innerHTML = `
+                <div class="player-body"></div>
+                <div class="player-arm left"></div>
+                <div class="player-arm right"></div>
+            `;
+        }
+
+        // Trigger attack animation
+        const rightArm = playerSprite.querySelector('.player-arm.right');
+        rightArm.classList.add('attacking');
+
+        // Reset attack state after animation
+        setTimeout(() => {
+            rightArm.classList.remove('attacking');
+            this.player.attacking = false;
+        }, 300);
+
+        // Reset cooldown
+        setTimeout(() => {
+            this.player.attackCooldown = false;
+        }, 500);
+    }
+
+    updatePlayerSprite() {
+        const playerSprite = document.querySelector('.player');
+        if (!playerSprite) return;
+
+        // Update position and direction
+        playerSprite.style.left = `${this.player.x}px`;
+        playerSprite.style.top = `${this.player.y}px`;
+        playerSprite.setAttribute('data-direction', this.player.direction);
+
+        // Create body parts if they don't exist
+        if (!playerSprite.querySelector('.player-body')) {
+            playerSprite.innerHTML = `
+                <div class="player-body"></div>
+                <div class="player-arm left"></div>
+                <div class="player-arm right"></div>
+            `;
+        }
+
+        // Update movement animation
+        if (this.player.moving) {
+            playerSprite.classList.add('moving');
+        } else {
+            playerSprite.classList.remove('moving');
+        }
+    }
+
             direction: 'south',
             moving: false,
-            diagonal: false
+            diagonal: false,
+            attacking: false,
+            attackCooldown: false
         };
+
+        // Bind attack handler
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !this.player.attackCooldown) {
+                this.attack();
+            }
+        });
 
         this.keys = {
             w: false,
