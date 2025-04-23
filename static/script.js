@@ -184,9 +184,16 @@ function startGame() {
 function initializeGameEnvironment() {
     playerPosition = { x: 400, y: 300 };
     monstersDefeated = 0;
-
+    
     const gameEnvironment = document.querySelector('.game-environment');
     gameEnvironment.innerHTML = '<div class="player"></div>';
+
+    // Add room doors randomly on one wall
+    const doorPosition = Math.floor(Math.random() * 4); // 0: north, 1: east, 2: south, 3: west
+    const roomDoor = document.createElement('div');
+    roomDoor.className = `room-door ${['north', 'east', 'south', 'west'][doorPosition]}`;
+    roomDoor.addEventListener('click', () => enterTreasureRoom());
+    gameEnvironment.appendChild(roomDoor);
 
     // Required monsters to defeat (starts at 8, increases by 3 per floor)
     const requiredMonsters = 8 + ((currentFloor - 1) * 3);
@@ -267,3 +274,51 @@ window.selectCharacter = function(choice) {
 };
 
 window.startGame = startGame;
+
+function enterTreasureRoom() {
+    const gameEnvironment = document.querySelector('.game-environment');
+    gameEnvironment.innerHTML = '<div class="player"></div>';
+    gameEnvironment.classList.add('treasure-room');
+
+    // Create treasure chest
+    const chest = document.createElement('div');
+    chest.className = 'treasure-chest';
+    chest.style.left = '400px';
+    chest.style.top = '200px';
+    chest.addEventListener('click', () => {
+        const isMageClass = document.querySelector('.mage, .frost-revenant, .celestial-monk') !== null;
+        
+        if (isMageClass) {
+            // Boost mana for magical characters
+            playerMana += 50;
+            showNotification('Mana increased by 50!', 'buff');
+        } else {
+            // Random boost for physical characters
+            const isAttackBoost = Math.random() > 0.5;
+            if (isAttackBoost) {
+                monsterDamage += 5;
+                showNotification('Attack increased by 5!', 'buff');
+            } else {
+                playerHealth += 30;
+                showNotification('Defense increased! Max Health +30', 'buff');
+            }
+        }
+        
+        chest.remove();
+        // Add return door
+        const returnDoor = document.createElement('div');
+        returnDoor.className = 'return-door';
+        returnDoor.addEventListener('click', initializeGameEnvironment);
+        gameEnvironment.appendChild(returnDoor);
+    });
+    
+    gameEnvironment.appendChild(chest);
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}

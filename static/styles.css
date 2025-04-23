@@ -1690,6 +1690,71 @@ button:disabled {
     transform: scale(1.1);
 }
 
+.room-door {
+    position: absolute;
+    width: 40px;
+    height: 60px;
+    background: #8b4513;
+    border: 2px solid #653000;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.room-door:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(139, 69, 19, 0.5);
+}
+
+.room-door.north { top: 0; left: 50%; transform: translateX(-50%); }
+.room-door.south { bottom: 0; left: 50%; transform: translateX(-50%); }
+.room-door.east { right: 0; top: 50%; transform: translateY(-50%); }
+.room-door.west { left: 0; top: 50%; transform: translateY(-50%); }
+
+.treasure-room {
+    background: linear-gradient(45deg, #2a1810, #3a2820) !important;
+}
+
+.return-door {
+    position: absolute;
+    width: 40px;
+    height: 60px;
+    background: #4a3c2d;
+    border: 2px solid #2a1c0d;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.return-door:hover {
+    transform: translateX(-50%) scale(1.1);
+    box-shadow: 0 0 15px rgba(74, 60, 45, 0.5);
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    z-index: 1000;
+    animation: fadeInOut 3s ease;
+}
+
+.notification.buff {
+    background: #4CAF50;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+    10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+}
+
 .damage-text {
     animation: floatUp 1s ease-out;
     pointer-events: none;
