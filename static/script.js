@@ -121,7 +121,7 @@ function checkCollisions() {
             // Update counter display
             const counterDisplay = document.querySelector('.counter-display');
             if (counterDisplay) {
-                counterDisplay.innerHTML = `Monsters defeated: ${monstersDefeated}/${requiredMonsters} - Kill exactly ${requiredMonsters} monsters to proceed!`;
+                counterDisplay.innerHTML = `Monsters defeated: ${monstersDefeated}/${requiredMonsters} - Defeat all monsters to proceed!`;
             }
 
             // Check if exactly the required number was defeated
@@ -205,8 +205,8 @@ function initializeGameEnvironment() {
     counterDisplay.innerHTML = `Defeat exactly ${requiredMonsters} monsters!`;
     document.body.appendChild(counterDisplay);
 
-    // Add more monsters than required
-    const numMonsters = requiredMonsters + 3;
+    // Spawn exactly the required number of monsters for the floor
+    const numMonsters = requiredMonsters;
 
     // Add monsters with increased stats per floor
     for(let i = 0; i < numMonsters; i++) {
