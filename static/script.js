@@ -397,7 +397,19 @@ function showDamageEffect() {
     setTimeout(() => damageText.remove(), 1000);
 }
 
-function enterRoom(roomType) {
+let roomHistory = [];
+let currentRoomId = 0;
+
+function generateNewRoom() {
+    const roomTypes = ['treasure-room', 'trap-room', 'sanctuary-room'];
+    return {
+        id: ++currentRoomId,
+        type: roomTypes[Math.floor(Math.random() * roomTypes.length)],
+        doors: Math.floor(Math.random() * 2) + 1  // 1 or 2 additional doors
+    };
+}
+
+function enterRoom(roomType, fromRoomId = null) {
     // Clear any existing room intervals
     if (window.currentRoomInterval) {
         clearInterval(window.currentRoomInterval);
@@ -407,6 +419,17 @@ function enterRoom(roomType) {
     const gameEnvironment = document.querySelector('.game-environment');
     gameEnvironment.innerHTML = '<div class="player"></div>';
     gameEnvironment.className = 'game-environment ' + roomType;
+
+    // Generate room properties
+    const currentRoom = {
+        id: fromRoomId || ++currentRoomId,
+        type: roomType,
+        doors: Math.floor(Math.random() * 2) + 1
+    };
+
+    if (fromRoomId === null) {
+        roomHistory.push(currentRoom);
+    }
 
     if (roomType === 'trap-room') {
         // Add trap monsters
@@ -426,13 +449,41 @@ function enterRoom(roomType) {
     const returnDoor = document.createElement('div');
     returnDoor.className = 'return-door';
     returnDoor.addEventListener('click', () => {
-        if (window.currentRoomInterval) {
-            clearInterval(window.currentRoomInterval);
-            window.currentRoomInterval = null;
+        if (roomHistory.length > 1) {
+            roomHistory.pop(); // Remove current room
+            const previousRoom = roomHistory[roomHistory.length - 1];
+            enterRoom(previousRoom.type, previousRoom.id);
+        } else {
+            if (window.currentRoomInterval) {
+                clearInterval(window.currentRoomInterval);
+                window.currentRoomInterval = null;
+            }
+            initializeGameEnvironment();
         }
-        initializeGameEnvironment();
     });
     gameEnvironment.appendChild(returnDoor);
+
+    // Add additional doors based on room configuration
+    const doorPositions = ['north', 'east', 'west'];
+    const usedPositions = new Set();
+    
+    for (let i = 0; i < currentRoom.doors; i++) {
+        let position;
+        do {
+            position = doorPositions[Math.floor(Math.random() * doorPositions.length)];
+        } while (usedPositions.has(position));
+        
+        usedPositions.add(position);
+        
+        const newDoor = document.createElement('div');
+        newDoor.className = `room-door ${position}`;
+        newDoor.addEventListener('click', () => {
+            const newRoom = generateNewRoom();
+            roomHistory.push(newRoom);
+            enterRoom(newRoom.type, newRoom.id);
+        });
+        gameEnvironment.appendChild(newDoor);
+    }
 }
 
 function enterTreasureRoom() {
