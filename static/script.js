@@ -264,9 +264,76 @@ function unlockFloorProgression() {
 
     if (monstersDefeated >= totalMonsters && currentFloor < maxFloor) {
         if (stairs) {
-            stairs.style.display = 'block';  // Show stairs when all monsters in the floor are defeated
+            stairs.style.display = 'block';
+            stairs.addEventListener('click', () => {
+                if (monstersDefeated >= totalMonsters) {
+                    currentFloor++;
+                    playerHealth = 100; // Reset health when entering new floor
+                    monstersDefeated = 0;
+                    document.getElementById('current-floor').textContent = currentFloor;
+                    initializeGameEnvironment();
+                }
+            });
         }
     }
+}
+
+function handleRoomDoors() {
+    const roomDoors = document.querySelectorAll('.room-door');
+    roomDoors.forEach(door => {
+        door.addEventListener('click', () => {
+            const doorType = door.classList.contains('trap-door') ? 'trap-room' :
+                           door.classList.contains('sanctuary-door') ? 'sanctuary-room' : 'treasure-room';
+            
+            switch(doorType) {
+                case 'treasure-room':
+                    enterTreasureRoom();
+                    break;
+                case 'trap-room':
+                    enterRoom('trap-room');
+                    break;
+                case 'sanctuary-room':
+                    enterRoom('sanctuary-room');
+                    break;
+            }
+        });
+    });
+}
+
+function initializeGameEnvironment() {
+    playerPosition = { x: 400, y: 300 };
+    const gameEnvironment = document.querySelector('.game-environment');
+    gameEnvironment.innerHTML = '<div class="player"></div>';
+
+    // Add random room door with random type
+    const doorTypes = ['treasure-door', 'trap-door', 'sanctuary-door'];
+    const randomDoorType = doorTypes[Math.floor(Math.random() * doorTypes.length)];
+    const doorPosition = ['north', 'east', 'south', 'west'][Math.floor(Math.random() * 4)];
+    
+    const roomDoor = document.createElement('div');
+    roomDoor.className = `room-door ${doorPosition} ${randomDoorType}`;
+    gameEnvironment.appendChild(roomDoor);
+
+    // Spawn monsters for the current floor
+    const numMonsters = 8 + ((currentFloor - 1) * 3);
+    for(let i = 0; i < numMonsters; i++) {
+        const monster = document.createElement('div');
+        monster.className = 'monster';
+        monster.style.left = `${300 + Math.random() * 200}px`;
+        monster.style.top = `${200 + Math.random() * 200}px`;
+        monster.style.transform = `scale(${1 + currentFloor * 0.1})`;
+        gameEnvironment.appendChild(monster);
+    }
+
+    // Add hidden stairs
+    const stairs = document.createElement('div');
+    stairs.className = 'floor-stairs';
+    stairs.style.display = 'none';
+    gameEnvironment.appendChild(stairs);
+
+    // Initialize door handlers
+    handleRoomDoors();
+    updatePlayerPosition();
 }
 
 window.selectCharacter = function(choice) {

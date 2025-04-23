@@ -1705,6 +1705,27 @@ button:disabled {
     box-shadow: 0 0 15px rgba(139, 69, 19, 0.5);
 }
 
+.room-door.treasure-door {
+    background: #ffd700;
+    border-color: #daa520;
+}
+
+.room-door.trap-door {
+    background: #ff4444;
+    border-color: #aa0000;
+}
+
+.room-door.sanctuary-door {
+    background: #4CAF50;
+    border-color: #45a049;
+}
+
+.floor-stairs:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+}
+
 .room-door.north { top: 0; left: 50%; transform: translateX(-50%); }
 .room-door.south { bottom: 0; left: 50%; transform: translateX(-50%); }
 .room-door.east { right: 0; top: 50%; transform: translateY(-50%); }
