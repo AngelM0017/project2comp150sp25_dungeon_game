@@ -121,15 +121,12 @@ function checkCollisions() {
             // Update counter display
             const counterDisplay = document.querySelector('.counter-display');
             if (counterDisplay) {
-                counterDisplay.innerHTML = `Monsters defeated: ${monstersDefeated}/${requiredMonsters} - Defeat all monsters to proceed!`;
+                counterDisplay.innerHTML = `Monsters defeated: ${monstersDefeated}/${requiredMonsters} - Defeat at least ${requiredMonsters} monsters to proceed!`;
             }
 
-            // Check if exactly the required number was defeated
-            if (monstersDefeated === requiredMonsters) {
+            // Check if required number of monsters is defeated
+            if (monstersDefeated >= requiredMonsters) {
                 unlockFloorProgression();
-            } else if (monstersDefeated > requiredMonsters) {
-                alert('Game Over! You defeated too many monsters!');
-                location.reload();
             }
 
             // Check if player died
