@@ -1780,57 +1780,114 @@ button:disabled {
 /* Character body parts */
 .player {
     position: relative;
-    width: 40px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
+    transition: transform 0.2s ease;
 }
 
 .player-body {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: currentColor;
+    background-color: #6a5acd;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(106, 90, 205, 0.5);
 }
 
 .player-arm {
     position: absolute;
-    width: 12px;
-    height: 30px;
-    background-color: currentColor;
-    top: 15px;
+    width: 10px;
+    height: 25px;
+    background-color: #4a3a9d;
+    top: 10px;
+    border-radius: 5px;
     transform-origin: top center;
+    transition: transform 0.2s ease;
 }
 
 .player-arm.left {
-    left: -8px;
+    left: -5px;
+    transform: rotate(15deg);
 }
 
 .player-arm.right {
-    right: -8px;
+    right: -5px;
+    transform: rotate(-15deg);
+}
+
+.player.moving .player-arm.left {
+    animation: runArmLeft 0.4s infinite;
+}
+
+.player.moving .player-arm.right {
+    animation: runArmRight 0.4s infinite;
+}
+
+.player.moving .player-body {
+    animation: bodyBounce 0.4s infinite;
+}
+
+@keyframes runArmLeft {
+    0%, 100% { transform: rotate(15deg); }
+    50% { transform: rotate(-25deg); }
+}
+
+@keyframes runArmRight {
+    0%, 100% { transform: rotate(-15deg); }
+    50% { transform: rotate(25deg); }
+}
+
+@keyframes bodyBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
 }
 
 /* Attack animation */
 @keyframes attackNorth {
-    0% { transform: rotate(0deg); }
-    50% { transform: rotate(-45deg); }
-    100% { transform: rotate(0deg); }
+    0% { transform: rotate(0deg) scaleY(1); }
+    25% { transform: rotate(-45deg) scaleY(1.2); }
+    50% { transform: rotate(-90deg) scaleY(1.4); }
+    75% { transform: rotate(-45deg) scaleY(1.2); }
+    100% { transform: rotate(0deg) scaleY(1); }
 }
 
 @keyframes attackSouth {
-    0% { transform: rotate(0deg); }
-    50% { transform: rotate(45deg); }
-    100% { transform: rotate(0deg); }
+    0% { transform: rotate(0deg) scaleY(1); }
+    25% { transform: rotate(45deg) scaleY(1.2); }
+    50% { transform: rotate(90deg) scaleY(1.4); }
+    75% { transform: rotate(45deg) scaleY(1.2); }
+    100% { transform: rotate(0deg) scaleY(1); }
 }
 
 @keyframes attackEast {
-    0% { transform: rotate(0deg); }
-    50% { transform: rotate(45deg); }
-    100% { transform: rotate(0deg); }
+    0% { transform: rotate(0deg) scaleX(1); }
+    25% { transform: rotate(45deg) scaleX(1.2); }
+    50% { transform: rotate(90deg) scaleX(1.4); }
+    75% { transform: rotate(45deg) scaleX(1.2); }
+    100% { transform: rotate(0deg) scaleX(1); }
 }
 
 @keyframes attackWest {
-    0% { transform: rotate(0deg); }
-    50% { transform: rotate(-45deg); }
-    100% { transform: rotate(0deg); }
+    0% { transform: rotate(0deg) scaleX(1); }
+    25% { transform: rotate(-45deg) scaleX(1.2); }
+    50% { transform: rotate(-90deg) scaleX(1.4); }
+    75% { transform: rotate(-45deg) scaleX(1.2); }
+    100% { transform: rotate(0deg) scaleX(1); }
+}
+
+.player-arm.right.attacking {
+    animation-duration: 0.4s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.player.attacking .player-body {
+    animation: attackPulse 0.4s ease;
+}
+
+@keyframes attackPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
 
 .player[data-direction="north"] .player-arm.right.attacking { animation: attackNorth 0.3s ease-in-out; }
