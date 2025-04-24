@@ -111,6 +111,13 @@ function checkCollisions() {
             playerHealth = Math.max(0, playerHealth - monsterDamage);
             updateHealthDisplay();
 
+            // Check for player death immediately after taking damage
+            if (playerHealth <= 0) {
+                document.getElementById('game-screen').style.display = 'none';
+                document.getElementById('game-over').style.display = 'block';
+                return;
+            }
+
             if (window.selectedCharacterType && ['Mage', 'FrostRevenant', 'CelestialMonk'].includes(window.selectedCharacterType)) {
                 updateManaDisplay({mana: Math.max(0, parseInt(document.getElementById('player-mana').textContent))});
             }
@@ -453,6 +460,16 @@ function startGame() {
 }
 
 window.startGame = startGame;
+
+function retryGame() {
+    playerHealth = 100;
+    currentFloor = 1;
+    monstersDefeated = 0;
+    document.getElementById('game-over').style.display = 'none';
+    document.getElementById('character-select').style.display = 'block';
+}
+
+window.retryGame = retryGame;
 
 // Room type handlers
 function handleTrapRoom() {
