@@ -293,16 +293,24 @@ function initializeGameEnvironment() {
     stairs.style.display = 'none';  // Hide stairs initially
     stairs.style.left = '600px';
     stairs.style.top = '400px';
+    stairs.style.cursor = 'pointer';
     gameEnvironment.appendChild(stairs);
 
     // Add click event to stairs
     stairs.addEventListener('click', () => {
-        if (currentFloor < maxFloor) {
-            currentFloor++;
-            document.getElementById('current-floor').textContent = currentFloor;
-            initializeGameEnvironment();
+        const requiredMonsters = Math.floor(currentFloor * 1.5);
+        if (monstersDefeated >= requiredMonsters) {
+            if (currentFloor < maxFloor) {
+                currentFloor++;
+                // Reset game state for new floor
+                monstersDefeated = 0;
+                document.getElementById('current-floor').textContent = currentFloor;
+                initializeGameEnvironment();
+            } else {
+                alert('Congratulations! You have completed all floors!');
+            }
         } else {
-            alert('Congratulations! You have completed all floors!');
+            alert(`Defeat ${requiredMonsters - monstersDefeated} more monsters to proceed!`);
         }
     });
 

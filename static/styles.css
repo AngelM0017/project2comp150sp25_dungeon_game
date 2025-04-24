@@ -1739,6 +1739,17 @@ button:disabled {
     border-radius: 10px;
     cursor: pointer;
     z-index: 100;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    pointer-events: auto;
+}
+
+.floor-stairs:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.6);
+}
+
+.floor-stairs:active {
+    transform: scale(0.95);
 }
 
 .floor-stairs:hover {
