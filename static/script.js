@@ -60,12 +60,12 @@ function updateHealthDisplay() {
     const healthText = document.getElementById('player-health');
     const healthBar = document.querySelector('.health-fill');
     const maxHealth = parseInt(document.getElementById('player-max-health').textContent);
-    
+
     if (healthText && healthBar) {
         healthText.textContent = Math.max(0, playerHealth);
         const healthPercent = (playerHealth / maxHealth) * 100;
         healthBar.style.width = `${Math.max(0, Math.min(100, healthPercent))}%`;
-        
+
         // Update health bar color based on percentage
         if (healthPercent > 60) {
             healthBar.style.backgroundColor = '#2ecc71';
@@ -82,14 +82,14 @@ function updateManaDisplay(character) {
     const manaText = document.getElementById('player-mana');
     const manaBar = document.querySelector('.mana-fill');
     const maxMana = parseInt(document.getElementById('player-max-mana').textContent);
-    
+
     if (!character || !character.mana) {
         if (manaContainer) {
             manaContainer.style.display = 'none';
         }
         return;
     }
-    
+
     if (manaContainer && manaText && manaBar) {
         manaContainer.style.display = 'block';
         manaText.textContent = Math.max(0, character.mana);
@@ -110,7 +110,7 @@ function checkCollisions() {
             // Player takes damage
             playerHealth = Math.max(0, playerHealth - monsterDamage);
             updateHealthDisplay();
-            
+
             if (window.selectedCharacterType && ['Mage', 'FrostRevenant', 'CelestialMonk'].includes(window.selectedCharacterType)) {
                 updateManaDisplay({mana: Math.max(0, parseInt(document.getElementById('player-mana').textContent))});
             }
@@ -213,7 +213,9 @@ function startGame() {
 function initializeGameEnvironment() {
     playerPosition = { x: 400, y: 300 };
     monstersDefeated = 0;
-    
+    this.visitedRooms = new Set(['0,0']); // Initialize visited rooms
+    this.currentRoom = { x: 0, y: 0 }; // Initialize current room
+
     const gameEnvironment = document.querySelector('.game-environment');
     gameEnvironment.innerHTML = '<div class="player"></div>';
 
@@ -277,6 +279,7 @@ function initializeGameEnvironment() {
 
     updatePlayerPosition();
     document.getElementById('current-floor').textContent = currentFloor;
+    updateMiniMap(); //Update minimap after initialization
 }
 
 function updatePlayerPosition() {
@@ -294,11 +297,18 @@ function unlockFloorProgression() {
     if (monstersDefeated >= totalMonsters && currentFloor < maxFloor) {
         if (stairs) {
             stairs.style.display = 'block';
+            // Store stairs location
+            window.stairsLocation = { x: this.currentRoom.x, y: this.currentRoom.y };
+            updateMiniMap();
+
             stairs.addEventListener('click', () => {
                 if (monstersDefeated >= totalMonsters) {
                     currentFloor++;
                     playerHealth = 100; // Reset health when entering new floor
                     monstersDefeated = 0;
+                    // Reset exploration tracking for new floor
+                    this.visitedRooms = new Set(['0,0']);
+                    window.stairsLocation = null;
                     document.getElementById('current-floor').textContent = currentFloor;
                     initializeGameEnvironment();
                 }
@@ -313,7 +323,7 @@ function handleRoomDoors() {
         door.addEventListener('click', () => {
             const doorType = door.classList.contains('trap-door') ? 'trap-room' :
                            door.classList.contains('sanctuary-door') ? 'sanctuary-room' : 'treasure-room';
-            
+
             switch(doorType) {
                 case 'treasure-room':
                     enterTreasureRoom();
@@ -338,7 +348,7 @@ function initializeGameEnvironment() {
     const doorTypes = ['treasure-door', 'trap-door', 'sanctuary-door'];
     const randomDoorType = doorTypes[Math.floor(Math.random() * doorTypes.length)];
     const doorPosition = ['north', 'east', 'south', 'west'][Math.floor(Math.random() * 4)];
-    
+
     const roomDoor = document.createElement('div');
     roomDoor.className = `room-door ${doorPosition} ${randomDoorType}`;
     gameEnvironment.appendChild(roomDoor);
@@ -402,7 +412,7 @@ function startGame() {
         document.getElementById('player-max-health').textContent = character.health;
         document.getElementById('player-attack').textContent = character.attack;
         document.getElementById('player-defense').textContent = character.defense;
-        
+
         if (character.mana > 0) {
             document.getElementById('mana-container').style.display = 'block';
             document.getElementById('player-mana').textContent = character.mana;
@@ -410,7 +420,7 @@ function startGame() {
         } else {
             document.getElementById('mana-container').style.display = 'none';
         }
-        
+
         initializeGameEnvironment();
     })
     .catch(error => {
@@ -545,15 +555,15 @@ function enterRoom(roomType, fromRoomId = null) {
     // Add additional doors based on room configuration
     const doorPositions = ['north', 'east', 'west'];
     const usedPositions = new Set();
-    
+
     for (let i = 0; i < currentRoom.doors; i++) {
         let position;
         do {
             position = doorPositions[Math.floor(Math.random() * doorPositions.length)];
         } while (usedPositions.has(position));
-        
+
         usedPositions.add(position);
-        
+
         const newDoor = document.createElement('div');
         newDoor.className = `room-door ${position}`;
         newDoor.addEventListener('click', () => {
@@ -575,7 +585,7 @@ function enterTreasureRoom() {
     chest.style.top = '200px';
     chest.addEventListener('click', () => {
         const isMageClass = document.querySelector('.mage, .frost-revenant, .celestial-monk') !== null;
-        
+
         if (isMageClass) {
             // Boost mana for magical characters
             playerMana += 50;
@@ -591,7 +601,7 @@ function enterTreasureRoom() {
                 showNotification('Defense increased! Max Health +30', 'buff');
             }
         }
-        
+
         chest.remove();
         // Add return door
         const returnDoor = document.createElement('div');
@@ -599,7 +609,7 @@ function enterTreasureRoom() {
         returnDoor.addEventListener('click', initializeGameEnvironment);
         gameEnvironment.appendChild(returnDoor);
     });
-    
+
     gameEnvironment.appendChild(chest);
 }
 
@@ -609,4 +619,63 @@ function showNotification(message, type) {
     notification.textContent = message;
     document.body.appendChild(notification);
     setTimeout(() => notification.remove(), 3000);
+}
+
+
+function updateMiniMap() {
+    this.miniMap.innerHTML = '';
+    for (let y = -2; y <= 2; y++) {
+        for (let x = -2; x <= 2; x++) {
+            const room = document.createElement('div');
+            room.className = 'mini-map-room';
+            const roomKey = `${this.currentRoom.x + x},${this.currentRoom.y + y}`;
+
+            if (x === 0 && y === 0) {
+                room.classList.add('current');
+                room.setAttribute('title', 'Current Room');
+            }
+            if (this.visitedRooms.has(roomKey)) {
+                room.classList.add('visited');
+            }
+            if (window.stairsLocation && 
+                window.stairsLocation.x === this.currentRoom.x + x && 
+                window.stairsLocation.y === this.currentRoom.y + y) {
+                room.classList.add('stairs');
+                room.setAttribute('title', 'Stairs to Next Floor');
+            }
+
+            this.miniMap.appendChild(room);
+        }
+        this.miniMap.appendChild(document.createElement('br'));
+    }
+    updateExplorationLog();
+}
+
+function updateExplorationLog() {
+    const contextMessage = document.getElementById('context-message');
+    if (!contextMessage) return;
+
+    let explorationHTML = '<div class="exploration-log">';
+    explorationHTML += `<h3>Floor ${currentFloor} Exploration</h3>`;
+
+    // Add current room status
+    explorationHTML += `<p class="current-room">Current Room: (${this.currentRoom.x}, ${this.currentRoom.y})</p>`;
+
+    // Add stairs location if found
+    if (window.stairsLocation) {
+        explorationHTML += `<p class="stairs-location">Stairs Found: (${window.stairsLocation.x}, ${window.stairsLocation.y})</p>`;
+    }
+
+    // List explored rooms
+    if (this.visitedRooms.size > 0) {
+        explorationHTML += '<p class="explored-rooms">Explored Rooms:</p><ul>';
+        Array.from(this.visitedRooms).forEach(roomKey => {
+            const [x, y] = roomKey.split(',');
+            explorationHTML += `<li>Room (${x}, ${y})</li>`;
+        });
+        explorationHTML += '</ul>';
+    }
+
+    explorationHTML += '</div>';
+    contextMessage.innerHTML = explorationHTML;
 }

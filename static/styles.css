@@ -1830,6 +1830,46 @@ button:disabled {
   animation: pulse 2s infinite;
 }
 
+.mini-map-room.stairs {
+  background: #4CAF50;
+  border-color: #45a049;
+  box-shadow: 0 0 8px #4CAF50;
+}
+
+.exploration-log {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+.exploration-log h3 {
+    color: #ffd700;
+    margin-bottom: 10px;
+}
+
+.exploration-log p {
+    margin: 5px 0;
+}
+
+.exploration-log .current-room {
+    color: #ffd700;
+}
+
+.exploration-log .stairs-location {
+    color: #4CAF50;
+}
+
+.exploration-log ul {
+    list-style: none;
+    padding-left: 10px;
+}
+
+.exploration-log li {
+    color: #aaa;
+    margin: 2px 0;
+}
+
 .room-transition {
   position: fixed;
   top: 0;
