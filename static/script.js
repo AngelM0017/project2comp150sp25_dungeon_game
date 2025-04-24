@@ -449,8 +449,9 @@ function initializeGameEnvironment() {
     updatePlayerPosition();
 }
 
-// Character selection state
-window.selectedCharacterType = null;
+// Initialize game state
+let selectedCharacter = null;
+let selectedCharacterType = null;
 
 function selectCharacter(choice) {
     const characterTypes = {
@@ -460,7 +461,8 @@ function selectCharacter(choice) {
         4: 'CelestialMonk'
     };
     
-    window.selectedCharacterType = characterTypes[choice];
+    selectedCharacterType = characterTypes[choice];
+    window.selectedCharacterType = selectedCharacterType;
     
     // Update UI to show character is selected
     document.querySelectorAll('.character-option').forEach(option => {
@@ -476,7 +478,9 @@ function selectCharacter(choice) {
     document.getElementById('character-name-input').style.display = 'block';
 }
 
-// Make function globally available
+// Make functions and variables globally available
+window.selectedCharacter = selectedCharacter;
+window.selectedCharacterType = selectedCharacterType;
 window.selectCharacter = selectCharacter;
 
 function startGame() {
