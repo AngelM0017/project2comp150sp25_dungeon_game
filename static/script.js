@@ -184,10 +184,10 @@ function checkCollisions() {
             let baseHealth;
             switch(window.selectedCharacterType) {
                 case 'Swordsman':
-                    baseHealth = 80;
+                    baseHealth = 100;
                     break;
                 case 'Mage':
-                    baseHealth = 80;
+                    baseHealth = 120;
                     break;
                 case 'FrostRevenant':
                     baseHealth = 120;
