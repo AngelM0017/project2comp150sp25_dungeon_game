@@ -337,8 +337,58 @@ function initializeGameEnvironment() {
 }
 
 window.selectCharacter = function(choice) {
+    const characterTypes = {
+        1: 'Swordsman',
+        2: 'Mage',
+        3: 'FrostRevenant',
+        4: 'CelestialMonk'
+    };
+    window.selectedCharacterType = characterTypes[choice];
     document.getElementById('character-name-input').style.display = 'block';
 };
+
+function startGame() {
+    const name = document.getElementById('name-input').value;
+    if (!name) {
+        alert('Please enter a character name');
+        return;
+    }
+
+    fetch('/start_game', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            choice: window.selectedCharacterType,
+            name: name
+        })
+    })
+    .then(response => response.json())
+    .then(character => {
+        document.getElementById('character-select').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'block';
+        document.getElementById('player-name').textContent = character.name;
+        document.getElementById('player-health').textContent = character.health;
+        document.getElementById('player-max-health').textContent = character.health;
+        document.getElementById('player-attack').textContent = character.attack;
+        document.getElementById('player-defense').textContent = character.defense;
+        
+        if (character.mana > 0) {
+            document.getElementById('mana-container').style.display = 'block';
+            document.getElementById('player-mana').textContent = character.mana;
+            document.getElementById('player-max-mana').textContent = character.mana;
+        } else {
+            document.getElementById('mana-container').style.display = 'none';
+        }
+        
+        initializeGameEnvironment();
+    })
+    .catch(error => {
+        console.error('Error starting game:', error);
+        alert('Failed to start game. Please try again.');
+    });
+}
 
 window.startGame = startGame;
 

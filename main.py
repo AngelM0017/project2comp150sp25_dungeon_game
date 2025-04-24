@@ -1,9 +1,11 @@
 from flask import Flask, render_template, jsonify, request
+from flask_cors import CORS
 import random
 import time
 import json
 
 app = Flask(__name__)
+CORS(app)
 
 # Character class represents both player and monsters
 class Character:
