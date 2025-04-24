@@ -1631,16 +1631,72 @@ button:disabled {
 }
 
 /* Mini-map styling */
+.mini-map-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
 .mini-map {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #8b7355;
-  border-radius: 8px;
-  padding: 10px;
-  z-index: 1000;
-  box-shadow: 0 0 20px rgba(139, 115, 85, 0.3);
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #8b7355;
+    border-radius: 8px;
+    padding: 10px;
+    display: inline-block;
+    box-shadow: 0 0 20px rgba(139, 115, 85, 0.3);
+}
+
+.mini-map-room {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 2px;
+    background: #333;
+    border: 1px solid #444;
+    transition: all 0.3s ease;
+}
+
+.mini-map-room.current {
+    background: #ffd700;
+    border-color: #ffed4a;
+    box-shadow: 0 0 8px #ffd700;
+}
+
+.mini-map-room.visited {
+    background: #8b7355;
+    border-color: #a08662;
+}
+
+.mini-map-room.stairs {
+    background: #4CAF50;
+    border-color: #45a049;
+    box-shadow: 0 0 8px #4CAF50;
+}
+
+.mini-map-room.combat {
+    background: #ff4444;
+    border-color: #cc0000;
+}
+
+.mini-map-room.treasure {
+    background: #ffd700;
+    border-color: #ccac00;
+}
+
+.mini-map-room.trap {
+    background: #9c27b0;
+    border-color: #7b1fa2;
+}
+
+.mini-map-room.sanctuary {
+    background: #2196F3;
+    border-color: #1976D2;
+}
+
+.mini-map-room.boss {
+    background: #d32f2f;
+    border-color: #b71c1c;
 }
 
 .mini-map-room {

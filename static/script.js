@@ -623,7 +623,12 @@ function showNotification(message, type) {
 
 
 function updateMiniMap() {
-    this.miniMap.innerHTML = '';
+    const contextMessage = document.getElementById('context-message');
+    contextMessage.innerHTML = '<div class="mini-map-container">';
+    
+    const miniMap = document.createElement('div');
+    miniMap.className = 'mini-map';
+    
     for (let y = -2; y <= 2; y++) {
         for (let x = -2; x <= 2; x++) {
             const room = document.createElement('div');
@@ -636,6 +641,10 @@ function updateMiniMap() {
             }
             if (this.visitedRooms.has(roomKey)) {
                 room.classList.add('visited');
+                // Add room type classes based on the room type
+                if (window.roomTypes && window.roomTypes[roomKey]) {
+                    room.classList.add(window.roomTypes[roomKey]);
+                }
             }
             if (window.stairsLocation && 
                 window.stairsLocation.x === this.currentRoom.x + x && 
@@ -644,10 +653,12 @@ function updateMiniMap() {
                 room.setAttribute('title', 'Stairs to Next Floor');
             }
 
-            this.miniMap.appendChild(room);
+            miniMap.appendChild(room);
         }
-        this.miniMap.appendChild(document.createElement('br'));
+        miniMap.appendChild(document.createElement('br'));
     }
+    
+    contextMessage.appendChild(miniMap);
     updateExplorationLog();
 }
 
