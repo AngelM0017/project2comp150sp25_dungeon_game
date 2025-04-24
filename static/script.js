@@ -258,19 +258,19 @@ function initializeGameEnvironment() {
     roomDoor.addEventListener('click', () => enterTreasureRoom());
     gameEnvironment.appendChild(roomDoor);
 
-    // Create counter display for monsters
-    const counterDisplay2 = document.createElement('div');
-    counterDisplay2.className = 'counter-display';
-    counterDisplay2.style.position = 'fixed';
-    counterDisplay2.style.top = '50px';
-    counterDisplay2.style.left = '20px';
-    counterDisplay2.style.color = 'white';
-    counterDisplay2.style.fontSize = '20px';
-    counterDisplay2.innerHTML = `Defeat the monsters to proceed!`;
-    document.body.appendChild(counterDisplay2);
-
     // Calculate required monsters for the floor (1.5 times the floor number)
     const requiredMonstersForFloor = Math.floor(currentFloor * 1.5);
+    
+    // Create counter display for monsters
+    const counterDisplay = document.createElement('div');
+    counterDisplay.className = 'counter-display';
+    counterDisplay.style.position = 'fixed';
+    counterDisplay.style.top = '50px';
+    counterDisplay.style.left = '20px';
+    counterDisplay.style.color = 'white';
+    counterDisplay.style.fontSize = '20px';
+    counterDisplay.innerHTML = `Monsters defeated: ${monstersDefeated}/${requiredMonstersForFloor} - Defeat all monsters to proceed!`;
+    document.body.appendChild(counterDisplay);
     
     // Spawn exactly the required number of monsters
     for(let i = 0; i < requiredMonstersForFloor; i++) {
@@ -286,12 +286,6 @@ function initializeGameEnvironment() {
         monster.style.transform = `scale(${1 + currentFloor * 0.1})`;
         gameEnvironment.appendChild(monster);
     }
-
-    // Update counter display
-    const counterDisplay = document.createElement('div');
-    counterDisplay.className = 'counter-display';
-    counterDisplay.innerHTML = `Monsters defeated: ${monstersDefeated}/${requiredMonstersForFloor} - Defeat all monsters to proceed!`;
-    document.body.appendChild(counterDisplay);
 
     // Add stairs but hide them initially
     const stairs = document.createElement('div');
