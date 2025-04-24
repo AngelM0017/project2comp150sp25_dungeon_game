@@ -57,20 +57,45 @@ let playerHealth = 100;
 let monsterDamage = 10 + (currentFloor * 3); // Reduced base damage and scaling
 
 function updateHealthDisplay() {
-    const healthDisplay = document.createElement('div');
-    healthDisplay.className = 'health-display';
-    healthDisplay.style.position = 'fixed';
-    healthDisplay.style.top = '20px';
-    healthDisplay.style.left = '20px';
-    healthDisplay.style.color = 'white';
-    healthDisplay.style.fontSize = '20px';
-    healthDisplay.innerHTML = `Health: ${playerHealth}`;
-
-    const existingDisplay = document.querySelector('.health-display');
-    if (existingDisplay) {
-        existingDisplay.remove();
+    const healthText = document.getElementById('player-health');
+    const healthBar = document.querySelector('.health-fill');
+    const maxHealth = parseInt(document.getElementById('player-max-health').textContent);
+    
+    if (healthText && healthBar) {
+        healthText.textContent = Math.max(0, playerHealth);
+        const healthPercent = (playerHealth / maxHealth) * 100;
+        healthBar.style.width = `${Math.max(0, Math.min(100, healthPercent))}%`;
+        
+        // Update health bar color based on percentage
+        if (healthPercent > 60) {
+            healthBar.style.backgroundColor = '#2ecc71';
+        } else if (healthPercent > 30) {
+            healthBar.style.backgroundColor = '#f1c40f';
+        } else {
+            healthBar.style.backgroundColor = '#e74c3c';
+        }
     }
-    document.body.appendChild(healthDisplay);
+}
+
+function updateManaDisplay(character) {
+    const manaContainer = document.getElementById('mana-container');
+    const manaText = document.getElementById('player-mana');
+    const manaBar = document.querySelector('.mana-fill');
+    const maxMana = parseInt(document.getElementById('player-max-mana').textContent);
+    
+    if (!character || !character.mana) {
+        if (manaContainer) {
+            manaContainer.style.display = 'none';
+        }
+        return;
+    }
+    
+    if (manaContainer && manaText && manaBar) {
+        manaContainer.style.display = 'block';
+        manaText.textContent = Math.max(0, character.mana);
+        const manaPercent = (character.mana / maxMana) * 100;
+        manaBar.style.width = `${Math.max(0, Math.min(100, manaPercent))}%`;
+    }
 }
 
 function checkCollisions() {
@@ -85,6 +110,10 @@ function checkCollisions() {
             // Player takes damage
             playerHealth = Math.max(0, playerHealth - monsterDamage);
             updateHealthDisplay();
+            
+            if (window.selectedCharacterType && ['Mage', 'FrostRevenant', 'CelestialMonk'].includes(window.selectedCharacterType)) {
+                updateManaDisplay({mana: Math.max(0, parseInt(document.getElementById('player-mana').textContent))});
+            }
 
             // Show player damage effect
             const damageText = document.createElement('div');
