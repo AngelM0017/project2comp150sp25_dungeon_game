@@ -180,7 +180,25 @@ function checkCollisions() {
         isColliding(player, stairs)) {
         if (currentFloor < maxFloor) {
             currentFloor++;
-            playerHealth = 100; // Reset health when entering new floor
+            // Maintain character's base health on floor change
+            let baseHealth;
+            switch(window.selectedCharacterType) {
+                case 'Swordsman':
+                    baseHealth = 80;
+                    break;
+                case 'Mage':
+                    baseHealth = 80;
+                    break;
+                case 'FrostRevenant':
+                    baseHealth = 120;
+                    break;
+                case 'CelestialMonk':
+                    baseHealth = 100;
+                    break;
+                default:
+                    baseHealth = 100;
+            }
+            playerHealth = baseHealth; // Reset health when entering new floor
             monstersDefeated = 0; // Reset monsters defeated
             updateHealthDisplay();
             document.getElementById('current-floor').textContent = currentFloor;
@@ -438,8 +456,29 @@ function startGame() {
         document.getElementById('character-select').style.display = 'none';
         document.getElementById('game-screen').style.display = 'block';
         document.getElementById('player-name').textContent = character.name;
-        document.getElementById('player-health').textContent = character.health;
-        document.getElementById('player-max-health').textContent = character.health;
+        
+        // Set health based on character type
+        let baseHealth;
+        switch(window.selectedCharacterType) {
+            case 'Swordsman':
+                baseHealth = 80;
+                break;
+            case 'Mage':
+                baseHealth = 80;
+                break;
+            case 'FrostRevenant':
+                baseHealth = 120;
+                break;
+            case 'CelestialMonk':
+                baseHealth = 100;
+                break;
+            default:
+                baseHealth = 100;
+        }
+        
+        playerHealth = baseHealth;
+        document.getElementById('player-health').textContent = baseHealth;
+        document.getElementById('player-max-health').textContent = baseHealth;
         document.getElementById('player-attack').textContent = character.attack;
         document.getElementById('player-defense').textContent = character.defense;
 
