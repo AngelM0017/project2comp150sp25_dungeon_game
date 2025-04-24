@@ -294,6 +294,12 @@ function unlockFloorProgression() {
     if (monstersDefeated >= totalMonsters && currentFloor < maxFloor) {
         if (stairs) {
             stairs.style.display = 'block';
+            // Update mini-map to show stairs
+            const miniMap = document.querySelector('.mini-map');
+            if (miniMap) {
+                const currentRoom = miniMap.children[Math.floor(miniMap.children.length / 2)].children[Math.floor(miniMap.children.length / 2)];
+                currentRoom.innerHTML = '⬆️';
+            }
             stairs.addEventListener('click', () => {
                 if (monstersDefeated >= totalMonsters) {
                     currentFloor++;
@@ -333,6 +339,39 @@ function initializeGameEnvironment() {
     playerPosition = { x: 400, y: 300 };
     const gameEnvironment = document.querySelector('.game-environment');
     gameEnvironment.innerHTML = '<div class="player"></div>';
+    
+    // Create mini-map container if it doesn't exist
+    let miniMap = document.querySelector('.mini-map');
+    if (!miniMap) {
+        miniMap = document.createElement('div');
+        miniMap.className = 'mini-map';
+        document.body.appendChild(miniMap);
+    }
+    
+    // Clear existing mini-map
+    miniMap.innerHTML = '';
+    
+    // Create mini-map grid
+    const mapSize = 5;
+    const currentPos = Math.floor(mapSize / 2);
+    
+    for (let y = 0; y < mapSize; y++) {
+        const row = document.createElement('div');
+        row.style.display = 'flex';
+        
+        for (let x = 0; x < mapSize; x++) {
+            const cell = document.createElement('div');
+            cell.className = 'mini-map-room';
+            
+            // Mark current room
+            if (x === currentPos && y === currentPos) {
+                cell.classList.add('current');
+            }
+            
+            row.appendChild(cell);
+        }
+        miniMap.appendChild(row);
+    }
 
     // Add random room door with random type
     const doorTypes = ['treasure-door', 'trap-door', 'sanctuary-door'];
