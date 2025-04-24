@@ -450,19 +450,20 @@ function initializeGameEnvironment() {
 }
 
 // Initialize game state
-let selectedCharacter = null;
-let selectedCharacterType = null;
+const characterTypes = {
+    1: { type: 'Swordsman', baseHealth: 80, mana: 0 },
+    2: { type: 'Mage', baseHealth: 80, mana: 50 },
+    3: { type: 'FrostRevenant', baseHealth: 120, mana: 75 },
+    4: { type: 'CelestialMonk', baseHealth: 100, mana: 100 }
+};
 
 function selectCharacter(choice) {
-    const characterTypes = {
-        1: 'Swordsman',
-        2: 'Mage',
-        3: 'FrostRevenant',
-        4: 'CelestialMonk'
-    };
+    const character = characterTypes[choice];
+    if (!character) return;
     
-    selectedCharacterType = characterTypes[choice];
-    window.selectedCharacterType = selectedCharacterType;
+    window.selectedCharacterType = character.type;
+    window.baseHealth = character.baseHealth;
+    window.baseMana = character.mana;
     
     // Update UI to show character is selected
     document.querySelectorAll('.character-option').forEach(option => {
@@ -487,6 +488,11 @@ function startGame() {
     const name = document.getElementById('name-input').value;
     if (!name) {
         alert('Please enter a character name');
+        return;
+    }
+    
+    if (!window.selectedCharacterType) {
+        alert('Please select a character type');
         return;
     }
 
