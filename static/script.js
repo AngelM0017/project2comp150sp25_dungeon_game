@@ -233,10 +233,7 @@ function initializeGameEnvironment() {
     roomDoor.addEventListener('click', () => enterTreasureRoom());
     gameEnvironment.appendChild(roomDoor);
 
-    // Required monsters to defeat (starts at 8, increases by 3 per floor)
-    const requiredMonsters = 8 + ((currentFloor - 1) * 3);
-
-    // Create counter display
+    // Create counter display for monsters
     const counterDisplay = document.createElement('div');
     counterDisplay.className = 'counter-display';
     counterDisplay.style.position = 'fixed';
@@ -244,7 +241,7 @@ function initializeGameEnvironment() {
     counterDisplay.style.left = '20px';
     counterDisplay.style.color = 'white';
     counterDisplay.style.fontSize = '20px';
-    counterDisplay.innerHTML = `Defeat exactly ${requiredMonsters} monsters!`;
+    counterDisplay.innerHTML = `Defeat the monsters to proceed!`;
     document.body.appendChild(counterDisplay);
 
     // Spawn exactly the required number of monsters for the floor
@@ -394,7 +391,7 @@ function initializeGameEnvironment() {
     updatePlayerPosition();
 }
 
-window.selectCharacter = function(choice) {
+function selectCharacter(choice) {
     const characterTypes = {
         1: 'Swordsman',
         2: 'Mage',
@@ -403,7 +400,10 @@ window.selectCharacter = function(choice) {
     };
     window.selectedCharacterType = characterTypes[choice];
     document.getElementById('character-name-input').style.display = 'block';
-};
+}
+
+// Make selectCharacter globally available
+window.selectCharacter = selectCharacter;
 
 function startGame() {
     const name = document.getElementById('name-input').value;
