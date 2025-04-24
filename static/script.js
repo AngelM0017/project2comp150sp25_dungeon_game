@@ -215,10 +215,10 @@ function initializeGameEnvironment() {
     monstersDefeated = 0;
     this.visitedRooms = new Set(['0,0']);
     this.currentRoom = { x: 0, y: 0 };
-    
+
     const gameEnvironment = document.querySelector('.game-environment');
     gameEnvironment.innerHTML = '<div class="player"></div>';
-    
+
     // Update counter display for required monsters
     const requiredMonsters = Math.floor(currentFloor * 1.5);
     const counterDisplay = document.createElement('div');
@@ -234,15 +234,15 @@ function initializeGameEnvironment() {
     gameEnvironment.appendChild(roomDoor);
 
     // Create counter display for monsters
-    const counterDisplay = document.createElement('div');
-    counterDisplay.className = 'counter-display';
-    counterDisplay.style.position = 'fixed';
-    counterDisplay.style.top = '50px';
-    counterDisplay.style.left = '20px';
-    counterDisplay.style.color = 'white';
-    counterDisplay.style.fontSize = '20px';
-    counterDisplay.innerHTML = `Defeat the monsters to proceed!`;
-    document.body.appendChild(counterDisplay);
+    const counterDisplay2 = document.createElement('div');
+    counterDisplay2.className = 'counter-display';
+    counterDisplay2.style.position = 'fixed';
+    counterDisplay2.style.top = '50px';
+    counterDisplay2.style.left = '20px';
+    counterDisplay2.style.color = 'white';
+    counterDisplay2.style.fontSize = '20px';
+    counterDisplay2.innerHTML = `Defeat the monsters to proceed!`;
+    document.body.appendChild(counterDisplay2);
 
     // Spawn exactly the required number of monsters for the floor
     const numMonsters = requiredMonsters;
@@ -319,11 +319,11 @@ function unlockFloorProgression() {
                     this.currentRoom = { x: 0, y: 0 };
                     window.stairsLocation = null;
                     window.roomTypes = {};
-                    
+
                     // Update UI
                     document.getElementById('current-floor').textContent = currentFloor;
                     updateHealthDisplay();
-                    
+
                     // Reset game environment for new floor
                     initializeGameEnvironment();
                     updateMiniMap();
@@ -391,6 +391,8 @@ function initializeGameEnvironment() {
     updatePlayerPosition();
 }
 
+let selectedCharacterType;
+
 function selectCharacter(choice) {
     const characterTypes = {
         1: 'Swordsman',
@@ -398,12 +400,14 @@ function selectCharacter(choice) {
         3: 'FrostRevenant',
         4: 'CelestialMonk'
     };
-    window.selectedCharacterType = characterTypes[choice];
+    selectedCharacterType = characterTypes[choice];
     document.getElementById('character-name-input').style.display = 'block';
 }
 
-// Make selectCharacter globally available
+// Make functions globally available
 window.selectCharacter = selectCharacter;
+window.selectedCharacter = selectCharacter;
+window.selectedCharacterType = selectedCharacterType;
 
 function startGame() {
     const name = document.getElementById('name-input').value;
