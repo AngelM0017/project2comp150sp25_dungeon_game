@@ -449,7 +449,8 @@ function initializeGameEnvironment() {
     updatePlayerPosition();
 }
 
-let selectedCharacterType;
+// Character selection state
+window.selectedCharacterType = null;
 
 function selectCharacter(choice) {
     const characterTypes = {
@@ -458,14 +459,25 @@ function selectCharacter(choice) {
         3: 'FrostRevenant',
         4: 'CelestialMonk'
     };
-    selectedCharacterType = characterTypes[choice];
+    
+    window.selectedCharacterType = characterTypes[choice];
+    
+    // Update UI to show character is selected
+    document.querySelectorAll('.character-option').forEach(option => {
+        option.classList.remove('selected');
+    });
+    
+    const selectedOption = document.querySelector(`[data-choice="${choice}"]`);
+    if (selectedOption) {
+        selectedOption.classList.add('selected');
+    }
+    
+    // Show name input
     document.getElementById('character-name-input').style.display = 'block';
 }
 
-// Make functions globally available
+// Make function globally available
 window.selectCharacter = selectCharacter;
-window.selectedCharacter = selectCharacter;
-window.selectedCharacterType = selectedCharacterType;
 
 function startGame() {
     const name = document.getElementById('name-input').value;
