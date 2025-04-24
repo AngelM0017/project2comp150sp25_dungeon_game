@@ -461,15 +461,30 @@ function startGame() {
 
 window.startGame = startGame;
 
-function retryGame() {
+function startOver() {
+    // Reset all game state
     playerHealth = 100;
     currentFloor = 1;
     monstersDefeated = 0;
+    window.selectedCharacterType = null;
+    window.stairsLocation = null;
+    window.roomTypes = {};
+    
+    // Reset UI
     document.getElementById('game-over').style.display = 'none';
+    document.getElementById('game-screen').style.display = 'none';
     document.getElementById('character-select').style.display = 'block';
+    document.getElementById('name-input').value = '';
+    document.getElementById('character-name-input').style.display = 'none';
+    
+    // Clear any existing intervals
+    if (window.currentRoomInterval) {
+        clearInterval(window.currentRoomInterval);
+        window.currentRoomInterval = null;
+    }
 }
 
-window.retryGame = retryGame;
+window.startOver = startOver;
 
 // Room type handlers
 function handleTrapRoom() {
