@@ -269,11 +269,11 @@ function initializeGameEnvironment() {
     counterDisplay2.innerHTML = `Defeat the monsters to proceed!`;
     document.body.appendChild(counterDisplay2);
 
-    // Spawn exactly the required number of monsters for the floor
-    const numMonsters = requiredMonsters;
-
-    // Add monsters with increased stats and size per floor
-    for(let i = 0; i < numMonsters; i++) {
+    // Calculate required monsters for the floor (1.5 times the floor number)
+    const requiredMonstersForFloor = Math.floor(currentFloor * 1.5);
+    
+    // Spawn exactly the required number of monsters
+    for(let i = 0; i < requiredMonstersForFloor; i++) {
         const monsterSize = 1 + (currentFloor * 0.15); // Monsters get 15% larger each floor
         const monsterHealth = 100 + (currentFloor * 20); // Health increases by 20 per floor
         const monster = document.createElement('div');
@@ -286,6 +286,12 @@ function initializeGameEnvironment() {
         monster.style.transform = `scale(${1 + currentFloor * 0.1})`;
         gameEnvironment.appendChild(monster);
     }
+
+    // Update counter display
+    const counterDisplay = document.createElement('div');
+    counterDisplay.className = 'counter-display';
+    counterDisplay.innerHTML = `Monsters defeated: ${monstersDefeated}/${requiredMonstersForFloor} - Defeat all monsters to proceed!`;
+    document.body.appendChild(counterDisplay);
 
     // Add stairs but hide them initially
     const stairs = document.createElement('div');
