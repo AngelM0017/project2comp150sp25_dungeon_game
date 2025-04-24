@@ -298,19 +298,38 @@ function initializeGameEnvironment() {
 
     // Add click event to stairs
     stairs.addEventListener('click', () => {
-        const requiredMonsters = Math.floor(currentFloor * 1.5);
-        if (monstersDefeated >= requiredMonsters) {
+        const requiredMonstersForFloor = Math.floor(currentFloor * 1.5);
+        if (monstersDefeated >= requiredMonstersForFloor) {
             if (currentFloor < maxFloor) {
+                // Maintain character's base health on floor change
+                let baseHealth;
+                switch(window.selectedCharacterType) {
+                    case 'Swordsman':
+                        baseHealth = 80;
+                        break;
+                    case 'Mage':
+                        baseHealth = 80;
+                        break;
+                    case 'FrostRevenant':
+                        baseHealth = 120;
+                        break;
+                    case 'CelestialMonk':
+                        baseHealth = 100;
+                        break;
+                    default:
+                        baseHealth = 100;
+                }
                 currentFloor++;
-                // Reset game state for new floor
+                playerHealth = baseHealth;
                 monstersDefeated = 0;
                 document.getElementById('current-floor').textContent = currentFloor;
+                updateHealthDisplay();
                 initializeGameEnvironment();
             } else {
                 alert('Congratulations! You have completed all floors!');
             }
         } else {
-            alert(`Defeat ${requiredMonsters - monstersDefeated} more monsters to proceed!`);
+            alert(`Defeat ${requiredMonstersForFloor - monstersDefeated} more monsters to proceed!`);
         }
     });
 
