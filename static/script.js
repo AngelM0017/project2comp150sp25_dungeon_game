@@ -213,11 +213,18 @@ function startGame() {
 function initializeGameEnvironment() {
     playerPosition = { x: 400, y: 300 };
     monstersDefeated = 0;
-    this.visitedRooms = new Set(['0,0']); // Initialize visited rooms
-    this.currentRoom = { x: 0, y: 0 }; // Initialize current room
-
+    this.visitedRooms = new Set(['0,0']);
+    this.currentRoom = { x: 0, y: 0 };
+    
     const gameEnvironment = document.querySelector('.game-environment');
     gameEnvironment.innerHTML = '<div class="player"></div>';
+    
+    // Update counter display for required monsters
+    const requiredMonsters = Math.floor(currentFloor * 1.5);
+    const counterDisplay = document.createElement('div');
+    counterDisplay.className = 'counter-display';
+    counterDisplay.innerHTML = `Monsters defeated: ${monstersDefeated}/${requiredMonsters} - Defeat at least ${requiredMonsters} monsters to proceed!`;
+    document.body.appendChild(counterDisplay);
 
     // Add room doors randomly on one wall
     const doorPosition = Math.floor(Math.random() * 4); // 0: north, 1: east, 2: south, 3: west
@@ -293,24 +300,36 @@ function unlockFloorProgression() {
     const stairs = document.querySelector('.floor-stairs');
     const monsters = document.querySelectorAll('.monster');
     const totalMonsters = monsters.length;
+    const requiredMonsters = Math.floor(currentFloor * 1.5);
 
-    if (monstersDefeated >= totalMonsters && currentFloor < maxFloor) {
+    if (monstersDefeated >= requiredMonsters && currentFloor < maxFloor) {
         if (stairs) {
             stairs.style.display = 'block';
-            // Store stairs location
             window.stairsLocation = { x: this.currentRoom.x, y: this.currentRoom.y };
             updateMiniMap();
 
-            stairs.addEventListener('click', () => {
-                if (monstersDefeated >= totalMonsters) {
+            // Remove any existing event listeners
+            const newStairs = stairs.cloneNode(true);
+            stairs.parentNode.replaceChild(newStairs, stairs);
+
+            newStairs.addEventListener('click', () => {
+                if (monstersDefeated >= requiredMonsters) {
+                    // Progress to next floor
                     currentFloor++;
-                    playerHealth = 100; // Reset health when entering new floor
+                    playerHealth = 100;
                     monstersDefeated = 0;
-                    // Reset exploration tracking for new floor
                     this.visitedRooms = new Set(['0,0']);
+                    this.currentRoom = { x: 0, y: 0 };
                     window.stairsLocation = null;
+                    window.roomTypes = {};
+                    
+                    // Update UI
                     document.getElementById('current-floor').textContent = currentFloor;
+                    updateHealthDisplay();
+                    
+                    // Reset game environment for new floor
                     initializeGameEnvironment();
+                    updateMiniMap();
                 }
             });
         }
