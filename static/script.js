@@ -625,10 +625,10 @@ function showNotification(message, type) {
 function updateMiniMap() {
     const contextMessage = document.getElementById('context-message');
     contextMessage.innerHTML = '<div class="mini-map-container">';
-    
+
     const miniMap = document.createElement('div');
     miniMap.className = 'mini-map';
-    
+
     for (let y = -2; y <= 2; y++) {
         for (let x = -2; x <= 2; x++) {
             const room = document.createElement('div');
@@ -641,9 +641,11 @@ function updateMiniMap() {
             }
             if (this.visitedRooms.has(roomKey)) {
                 room.classList.add('visited');
-                // Add room type classes based on the room type
-                if (window.roomTypes && window.roomTypes[roomKey]) {
-                    room.classList.add(window.roomTypes[roomKey]);
+                // Add room type specific classes
+                const roomType = window.roomTypes?.[roomKey];
+                if (roomType) {
+                    room.classList.add(roomType);
+                    room.setAttribute('title', `${roomType.charAt(0).toUpperCase() + roomType.slice(1)} Room`);
                 }
             }
             if (window.stairsLocation && 
@@ -657,9 +659,18 @@ function updateMiniMap() {
         }
         miniMap.appendChild(document.createElement('br'));
     }
-    
+
     contextMessage.appendChild(miniMap);
-    updateExplorationLog();
+
+    // Add exploration log below the map
+    const logDiv = document.createElement('div');
+    logDiv.className = 'exploration-log';
+    logDiv.innerHTML = `
+        <p>Current Floor: ${currentFloor}</p>
+        <p>Current Position: (${this.currentRoom.x}, ${this.currentRoom.y})</p>
+        ${window.stairsLocation ? `<p>Stairs Location: (${window.stairsLocation.x}, ${window.stairsLocation.y})</p>` : ''}
+    `;
+    contextMessage.appendChild(logDiv);
 }
 
 function updateExplorationLog() {

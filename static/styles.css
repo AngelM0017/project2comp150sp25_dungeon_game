@@ -1600,9 +1600,9 @@ button:disabled {
   position: absolute;
   width: 60px;
   height: 90px;
-  background: linear-gradient(to bottom, #4a3c2d, #2a1c0d);
-  cursor: pointer;
-  transition: all 0.3s ease;
+  background: linear-gradient(to bottom, #8b7355, #6b5335);
+  border: 2px solid #a08662;
+  transition: all 0.2s ease;
   z-index: 50;
 }
 
